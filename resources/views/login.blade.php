@@ -6,6 +6,10 @@
     </head>
     <body>
         <h1>ログイン</h1>
+        @if (Session::has('error_message'))
+            <p>{{ Session::get('error_message') }}</p>
+        @endif
+
         @if ($errors->any())
             <ul>
                 @foreach ($errors->all() as $error)

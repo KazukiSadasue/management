@@ -3,6 +3,8 @@
 namespace App\Repositories;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Session;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -14,17 +16,6 @@ class UserRepository implements UserRepositoryInterface
     public function __construct(User $user)
     {
     $this->user = $user;
-    }
-
-    /**
-     * 名前で1レコードを取得
-     *
-     * @var $name
-     * @return object
-     */
-    public function getFirstRecordByName($name)
-    {
-        return $this->user->where('name', '=', $name)->first();
     }
 
     /**
@@ -45,17 +36,15 @@ class UserRepository implements UserRepositoryInterface
      */
     public function login($data)
     {
-        $data['password'] = bcrypt($data['password']);
         $user = $this->user->where('email', '=', $data['email'])->first();
-        if ($user['password'] != $data['password'])
+        if (Hash::check($data['password'],$user['password']))
         {
-            return redirect('create');
-            \Log::error(print_r($user['password'],true));
+            Session::put('id', $user['id']);
+            Session::put('name', $user['name']);
+            return redirect('mypage');
         }
-
-        if ($user['password'] == $data['password'])
-        {
-            return redirect('create');
-        }
+            
+        \Session::flash('error_message', 'パスワードが違います');
+        return redirect('login');
     }    
 }

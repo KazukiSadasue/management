@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Repositories\UserRepositoryInterface;
 use App\Http\Requests\StoreUserPost;
 use App\Http\Requests\LoginUserPost;
+use Session;
 
 class UserController extends Controller
 {
@@ -28,6 +29,15 @@ class UserController extends Controller
     {
         return $this->user_repository->login($request->all());
     }
+    
+    /**
+     * ログアウト処理
+     */
+    public function logout()
+    {
+        Session::flush();
+        return redirect('login');
+    }
 
     /**
      * 新規作成ページ表示
@@ -45,6 +55,12 @@ class UserController extends Controller
         $this->user_repository->store($request->all());
         return redirect('login');
     }
-
     
+    /**
+     * ユーザーページ
+     */
+    public function mypage()
+    {
+        return $this->user_repository->checkUser();
+    }
 }

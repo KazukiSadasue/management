@@ -5,14 +5,6 @@ namespace App\Repositories;
 interface UserRepositoryInterface
 {
     /**
-     * Nameで1レコードを取得
-     *
-     * @var string $name
-     * @return object
-     */
-    public function getFirstRecordByName($name);
-
-    /**
      * ユーザー作成
      *
      * @var array $data
@@ -25,5 +17,4 @@ interface UserRepositoryInterface
      * @var array $data
      */
     public function login($data);
-   
 }
