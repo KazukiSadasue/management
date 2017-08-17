@@ -15,13 +15,13 @@
             }
         </style>
         <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
-        
+        <script type="text/javascript" src="js/check.js"></script>
     </head>
     <body>
         <a href="logout">ログアウト</a>
         <h1>ようこそ{{ Session::get('name') }}さん</h1>
-        <a href="start">勤務開始</a>
-        <a href="finish">勤務終了</a>
+        <input type="submit" id="start" value="勤務開始">
+        <input type="submit" id="finish" value="勤務終了">
         <hr>
         @if (Session::has('error_message'))
             <p class="error">{{ Session::get('error_message') }}</p>

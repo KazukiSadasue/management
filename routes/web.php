@@ -21,6 +21,8 @@ Route::post('/login', 'UserController@login');
 Route::get('/logout', 'UserController@logout');
 Route::post('/create', 'UserController@store');
 
-Route::get('/start', 'HistoryController@start');
-Route::get('/finish', 'HistoryController@finish');
-Route::get('/mypage', 'HistoryController@mypage');
+Route::group(['middleware' => ['web', 'check']], function () {
+    Route::get('/start', 'HistoryController@start');
+    Route::get('/finish', 'HistoryController@finish');
+    Route::get('/mypage', 'HistoryController@mypage');
+});

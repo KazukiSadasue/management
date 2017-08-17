@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Repositories\HistoryRepositoryInterface;
 use Session;
+use Response;
 
 class HistoryController extends Controller
 {
@@ -17,12 +18,7 @@ class HistoryController extends Controller
      */
     public function start()
     {
-        if (Session::has('id'))
-        {
-            return $this->history_repository->start();     
-        }
-        \Session::flash('error_message', 'ログインしてください');
-        return redirect('login');   
+        return $this->history_repository->start();
     }
     
     /**
@@ -30,12 +26,7 @@ class HistoryController extends Controller
      */
     public function finish()
     {
-        if (Session::has('id'))
-        {
-            return $this->history_repository->finish();     
-        }
-        \Session::flash('error_message', 'ログインしてください');
-        return redirect('login');   
+        return $this->history_repository->finish();     
     }
     
     /**
@@ -43,12 +34,7 @@ class HistoryController extends Controller
      */
     public function mypage()
     {
-        if (Session::has('id'))
-        {
-            return $this->history_repository->history();        
-        }
-        \Session::flash('error_message', 'ログインしてください');
-        return redirect('login');   
+        return $this->history_repository->history();        
     }
     
 }
