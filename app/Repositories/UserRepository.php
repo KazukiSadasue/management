@@ -46,5 +46,16 @@ class UserRepository implements UserRepositoryInterface
             
         \Session::flash('error_message', 'パスワードが違います');
         return redirect('login');
-    }    
+    }
+    
+    /**
+     * カレンダー処理
+     *
+     * @var array $data
+     */
+    public function calendar()
+    {
+        //
+    }
+
 }

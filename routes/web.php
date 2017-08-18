@@ -26,3 +26,5 @@ Route::group(['middleware' => ['web', 'check']], function () {
     Route::get('/finish', 'HistoryController@finish');
     Route::get('/mypage', 'HistoryController@mypage');
 });
+
+Route::get('/calendar', 'UserController@calendar');

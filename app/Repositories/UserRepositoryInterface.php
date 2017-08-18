@@ -17,4 +17,11 @@ interface UserRepositoryInterface
      * @var array $data
      */
     public function login($data);
+
+    /**
+     * カレンダー処理
+     *
+     * @var array $data
+     */
+    public function calendar();
 }

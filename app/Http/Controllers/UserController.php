@@ -63,4 +63,13 @@ class UserController extends Controller
     {
         return $this->user_repository->checkUser();
     }
+    
+    /**
+     * 日付一覧ページ
+     */
+    public function calendar()
+    {
+        return view('calendar');
+    }
+
 }

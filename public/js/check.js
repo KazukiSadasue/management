@@ -6,16 +6,17 @@ $(function()
                 type:"GET",
                 data: {"work_time":Math.floor( $.now() / 1000 )},
                 url:"start",
-                success: function(bool)
+                success: function(type)
                 {
-                    if (bool == 'true')
-                    {
+                    if (type == '1') {
                         alert('すでに出勤済みです');
                     }
-                    else
-                    {
+                    if (type == '2') {
                         alert('出勤しました');
                         location.reload();
+                    }
+                    if (type == '3') {
+                        alert('まだ退勤していません。');
                     }
                 },
                 error: function(XMLHttpRequest,textStatus,errorThrown)
@@ -30,17 +31,19 @@ $(function()
         $.ajax(
             {
                 type:"GET",
+                data: {"work_time":Math.floor( $.now() / 1000 )},
                 url:"finish",
-                success: function(bool)
+                success: function(type)
                 {
-                    if (bool == 'true')
-                    {
+                    if (type == '1') {
                         alert('すでに退勤済みです')
                     }
-                    else
-                    {
+                    if (type == '2') {
                         alert('退勤しました');
                         location.reload();                        
+                    }
+                    if (type == '3') {
+                        alert('まだ出勤していません');                        
                     }
                 },
                 error: function(XMLHttpRequest,textStatus,errorThrown)
