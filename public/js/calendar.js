@@ -4,7 +4,6 @@ $(function()
     {
         var year = $('#year').val();
         var month = $('#month').val();
-        alert( year + '年' + month + '月' );
-        window.location.href = '/' + year + '/' + month;
+        window.location.href = '/calendar' + '/' + year + '/' + month;
     });
 });

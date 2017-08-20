@@ -27,4 +27,5 @@ Route::group(['middleware' => ['web', 'check']], function () {
     Route::get('/mypage', 'HistoryController@mypage');
 });
 
-Route::get('/calendar', 'UserController@calendar');
+Route::get('/calendar', 'UserController@calendarSelect');
+Route::get('/calendar/{year}/{month}', 'UserController@calendarList');

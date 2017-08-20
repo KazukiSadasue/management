@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Session;
+use Carbon\Carbon;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -46,16 +47,6 @@ class UserRepository implements UserRepositoryInterface
             
         \Session::flash('error_message', 'パスワードが違います');
         return redirect('login');
-    }
-    
-    /**
-     * カレンダー処理
-     *
-     * @var array $data
-     */
-    public function calendar()
-    {
-        //
     }
 
 }
