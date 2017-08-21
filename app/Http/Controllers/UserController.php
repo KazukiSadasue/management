@@ -6,7 +6,6 @@ use App\Repositories\UserRepositoryInterface;
 use App\Http\Requests\StoreUserPost;
 use App\Http\Requests\LoginUserPost;
 use Session;
-use Carbon\Carbon;
 
 class UserController extends Controller
 {
@@ -64,23 +63,4 @@ class UserController extends Controller
     {
         return $this->user_repository->checkUser();
     }
-    
-    /**
-     * 日付選択ページ
-     */
-    public function calendarSelect()
-    {
-        return view('calendar');
-    }
-    
-    /**
-     * 日付一覧ページ
-     */
-    public function calendarList($year, $month)
-    {
-        $first_day = Carbon::create($year, $month)->startOfMonth();
-        $last_day = Carbon::create($year, $month)->endOfMonth();
-        return view('calendar', ['first_day' => $first_day, 'last_day' => $last_day]);
-    }
-
 }

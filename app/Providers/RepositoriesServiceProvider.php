@@ -25,5 +25,6 @@ class RepositoriesServiceProvider extends ServiceProvider
     {
         \App::bind('App\Repositories\UserRepositoryInterface', 'App\Repositories\UserRepository');
         \App::bind('App\Repositories\HistoryRepositoryInterface', 'App\Repositories\HistoryRepository');
+        \App::bind('App\Repositories\WorkSheetRepositoryInterface', 'App\Repositories\WorkSheetRepository');
     }
 }
