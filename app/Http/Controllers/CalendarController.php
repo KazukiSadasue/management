@@ -38,8 +38,6 @@ class CalendarController extends Controller
         $after_five_years = Carbon::now()->addYear(5);
         $holidays = Yasumi::create('Japan', $year, 'ja_JP');
 
-        \Log::error(Config::get('const.WEEKDAY')[Carbon::now()->dayOfWeek]);
-
         return view('calendar', [
             'first_day' => $first_day,
             'last_day' => $last_day,
@@ -66,9 +64,9 @@ class CalendarController extends Controller
     /**
      * 勤怠登録
      */
-    public function store(Request $request)
+    public function store(Request $request, $year, $month, $day)
     {
-        $this->work_sheet_repository->store($request->all());
-        return redirect('/calendar');
+        $this->work_sheet_repository->store($request->all(), $year, $month, $day);
+        return redirect("/calendar/${year}/${month}");
     }
 }

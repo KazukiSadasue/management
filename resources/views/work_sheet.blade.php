@@ -81,7 +81,7 @@
                 </tr>
                 <tr>
                     <th>承認</th>
-                    <td><input type="checkbox"></td>
+                    <td><input type="checkbox" name="approval" value="1"></td>
                 </tr>
             </table>
             {{ csrf_field() }}

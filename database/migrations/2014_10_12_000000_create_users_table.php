@@ -17,8 +17,9 @@ class CreateUsersTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('pref');
+            $table->string('pref')->comment('住所');
             $table->string('password');
+            $table->boolean('approval')->default('0')->comment('0:一般 1:管理者');
             $table->rememberToken();
             $table->timestamps();
         });

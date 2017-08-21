@@ -35,10 +35,15 @@ class WorkSheetRepository implements WorkSheetRepositoryInterface
      * 勤怠データ登録
      *
      * @var array $request
+     * @var int $year
+     * @var int $month
+     * @var int $day
      */
-    public function store($request)
+    public function store($request, $year, $month, $day)
     {
         $request['user_id'] = Session::get('id');
+        $request['start_work'] = Carbon::create($year, $month, $day, $request['start_work_hour'], $request['start_work_min']);
+        $request['finish_work'] = Carbon::create($year, $month, $day, $request['finish_work_hour'], $request['finish_work_min']);
         return $this->work_sheet->create($request);
     }
 }

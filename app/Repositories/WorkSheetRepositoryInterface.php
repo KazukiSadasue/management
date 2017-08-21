@@ -15,7 +15,10 @@ interface WorkSheetRepositoryInterface
      * 勤怠データ登録
      *
      * @var array $request
+     * @var int $year
+     * @var int $month
+     * @var int $day
      */
-    public function store($request);
+    public function store($request, $year, $month, $day);
    
 }
