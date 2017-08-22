@@ -119,6 +119,7 @@ return [
         'email' => 'メールアドレス',
         'pref' => '住所',
         'password' => 'パスワード',
+        'employment' => '作業内容'
     ],
 
 ];

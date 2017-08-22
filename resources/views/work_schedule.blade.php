@@ -14,18 +14,35 @@
             td {
                 border: 1px solid;
             }
+
+            .top-text {
+                width:50px;
+            }
         </style>
     </head>
     <body>
-        <h3>{{ $year }}年 {{ $month }}月 {{ $day }}日 {{ Session::get('name') }}さん</h3>
+        @if (Session::has('error_message'))
+            <p>{{ Session::get('error_message') }}</p>
+        @endif
+        @if ($errors->any())
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        @endif   
         <form method="post">
+            <input type="text" name="year" value={{ $year }} class="top-text" readonly>年
+            <input type="text" name="month" value={{ $month }} class="top-text" readonly>月
+            <input type="text" name="day" value={{ $day }} class="top-text" readonly>日
+            {{ Session::get('name') }}さん
             <table>
                 <tr>
                     <th>プロジェクト</th>
                     <td>
                         <select name="project_id">
                             @foreach ($projects as $project)
-                                <option value={{ $project['id'] }}>{{ $project['project_name'] }}</option>
+                                <option value={{ $project->id }}>{{ $project->project_name }}</option>
                             @endforeach
                         </select>
                     </td>
@@ -33,25 +50,25 @@
                 <tr>
                     <th>出勤タイプ</th>
                     <td>
-                        <input type="radio" name="work_type" value={{ App\Models\WorkSheet::WORK_TYPE_GO }} checked>出勤
-                        <input type="radio" name="work_type" value={{ App\Models\WorkSheet::WORK_TYPE_AM }}>午前休
-                        <input type="radio" name="work_type" value={{ App\Models\WorkSheet::WORK_TYPE_PM }}>午後休
-                        <input type="radio" name="work_type" value={{ App\Models\WorkSheet::WORK_TYPE_ALL }}>全休
+                        <input type="radio" name="type" value={{ App\Models\WorkSchedule::TYPE_GO }} checked>{{ Config::get('const.TYPE')["1"] }}
+                        <input type="radio" name="type" value={{ App\Models\WorkSchedule::TYPE_AM }}>{{ Config::get('const.TYPE')["2"] }}
+                        <input type="radio" name="type" value={{ App\Models\WorkSchedule::TYPE_PM }}>{{ Config::get('const.TYPE')["3"] }}
+                        <input type="radio" name="type" value={{ App\Models\WorkSchedule::TYPE_ALL }}>{{ Config::get('const.TYPE')["4"] }}
                     </td>
                 </tr>
                 <tr>
                     <th>作業内容</th>
                     <td>
-                        <input type="checkbox" name="work_data" value={{ App\Models\WorkSheet::WORK_DATA_PROGRAM }} checked>プログラム
-                        <input type="checkbox" name="work_data" value={{ App\Models\WorkSheet::WORK_DATA_DESIGN }}>デザイン
-                        <input type="checkbox" name="work_data" value={{ App\Models\WorkSheet::WORK_DATA_SPEC }}>仕様
-                        <input type="checkbox" name="work_data" value={{ App\Models\WorkSheet::WORK_DATA_TEST }}>テスト
+                        <input type="checkbox" name="employment[]" value={{ App\Models\WorkSchedule::PROGRAM }}>{{ Config::get('const.EMPLOYMENT')["1"] }}
+                        <input type="checkbox" name="employment[]" value={{ App\Models\WorkSchedule::DESIGN }}>{{ Config::get('const.EMPLOYMENT')["2"] }}
+                        <input type="checkbox" name="employment[]" value={{ App\Models\WorkSchedule::SPEC }}>{{ Config::get('const.EMPLOYMENT')["3"] }}
+                        <input type="checkbox" name="employment[]" value={{ App\Models\WorkSchedule::TEST }}>{{ Config::get('const.EMPLOYMENT')["4"] }}
                     </td>
                 </tr>
                 <tr>
                     <th>備考</th>
                     <td>
-                        <input type="textbox" name="remarks">
+                        <input type="text" name="remarks" value="{{ old('remarks') }}">
                     </td>
                 </tr>
                 <tr>
@@ -78,10 +95,6 @@
                             @endfor
                         </select>分
                     </td>
-                </tr>
-                <tr>
-                    <th>承認</th>
-                    <td><input type="checkbox" name="approval" value="1"></td>
                 </tr>
             </table>
             {{ csrf_field() }}

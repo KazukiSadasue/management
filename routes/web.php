@@ -29,5 +29,11 @@ Route::group(['middleware' => ['web', 'check']], function () {
 
 Route::get('/calendar', 'CalendarController@index');
 Route::get('/calendar/{year}/{month}', 'CalendarController@list');
-Route::get('/calendar/{year}/{month}/{day}', 'CalendarController@view');
+Route::get('/calendar/{year}/{month}/{day}', 'CalendarController@entry_page_show');
 Route::post('/calendar/{year}/{month}/{day}', 'CalendarController@store');
+
+
+
+Route::get('/test', 'TestController@index');
+Route::post('/test', 'TestController@test');
+Route::get('/test2', 'TestController@test2');

@@ -181,6 +181,7 @@ return [
          * 追記した Service Providers
          */
         App\Providers\RepositoriesServiceProvider::class,
+        App\Providers\ValidatorServiceProvider::class,
     ],
 
     /*

@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Repositories\WorkSheetRepositoryInterface;
+use App\Repositories\WorkScheduleRepositoryInterface;
+use App\Http\Requests\WorkSchedulePost;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Yasumi\Yasumi;
+use Illuminate\Support\Facades\DB;
 
 class CalendarController extends Controller
 {
-    public function __construct(WorkSheetRepositoryInterface $work_sheet_repository)
+    public function __construct(WorkScheduleRepositoryInterface $work_schedule_repository)
     {
-        $this->work_sheet_repository = $work_sheet_repository;
+        $this->work_schedule_repository = $work_schedule_repository;
     }
 
     /**
@@ -50,10 +51,10 @@ class CalendarController extends Controller
     /**
      * 勤怠記入ページ
      */
-    public function view($year, $month, $day)
+    public function entry_page_show($year, $month, $day)
     {
-        $projects = $this->work_sheet_repository->get_projects();
-        return view('work_sheet', [
+        $projects = DB::table('projects')->get();
+        return view('work_schedule', [
             'year' => $year,
             'month' => $month,
             'day' => $day,
@@ -64,9 +65,8 @@ class CalendarController extends Controller
     /**
      * 勤怠登録
      */
-    public function store(Request $request, $year, $month, $day)
+    public function store(WorkSchedulePost $request)
     {
-        $this->work_sheet_repository->store($request->all(), $year, $month, $day);
-        return redirect("/calendar/${year}/${month}");
+        return $this->work_schedule_repository->store($request->all());
     }
 }
