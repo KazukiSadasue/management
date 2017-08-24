@@ -141,6 +141,7 @@
                 </tr>
             </table>
             <input type="hidden" name="update" value="{{ $data['update'] }}">
+            <input type="hidden" name="id" value="{{ $data['entry']['id'] }}">
             {{ csrf_field() }}
             <input type="submit" value="登録">
         </form>

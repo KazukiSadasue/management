@@ -27,17 +27,18 @@ class WorkScheduleRepository implements WorkScheduleRepositoryInterface
      */
     public function store($request)
     {
-        if ($request['update'] = false) {
+        $request['start_at'] = Carbon::createFromTime($request['start_work_hour'], $request['start_work_min']);
+        $request['finish_at'] = Carbon::createFromTime($request['finish_work_hour'], $request['finish_work_min']);
+        $request['employment'] = implode(',', $request['employment']);
+        if ($request['update'] == false) {
             $request['user_id'] = Session::get('id');
             $request['day_at'] = Carbon::createFromDate($request['year'], $request['month'], $request['day']);
-            $request['start_at'] = Carbon::createFromTime($request['start_work_hour'], $request['start_work_min']);
-            $request['finish_at'] = Carbon::createFromTime($request['finish_work_hour'], $request['finish_work_min']);
-            $request['employment'] = implode(',', $request['employment']);
 
             $this->work_schedule->create($request);
             return redirect("/calendar/" . $request['year'] . "/" . $request['month']);
+        } else {
+            $this->work_schedule->where('id', '=', $request['id'])->update($request->all)->save;
         }
-        //else
     }
 
     /**
@@ -96,7 +97,6 @@ class WorkScheduleRepository implements WorkScheduleRepositoryInterface
         foreach ( explode( ',', $data['entry']['employment'] ) as $employment ) {
             $data['employment'][$employment] = $employment;
         }
-            // \Log::error( $data['entry']['start_at']['0'].$data['entry']['start_at']['1'] );
         return $data;
     }
 }
