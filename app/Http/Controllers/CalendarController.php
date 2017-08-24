@@ -6,8 +6,6 @@ use App\Repositories\WorkScheduleRepositoryInterface;
 use App\Http\Requests\WorkSchedulePost;
 use Illuminate\Support\Facades\Config;
 use Carbon\Carbon;
-use Yasumi\Yasumi;
-use Illuminate\Support\Facades\DB;
 
 class CalendarController extends Controller
 {
@@ -31,37 +29,28 @@ class CalendarController extends Controller
      */
     public function list($year, $month)
     {
-        
-        $first_day = Carbon::create($year, $month)->startOfMonth();
-        $last_day = Carbon::create($year, $month)->endOfMonth();
-        $now_date = Carbon::now();
-        $five_years_ago = Carbon::now()->subYear(5);
-        $after_five_years = Carbon::now()->addYear(5);
-        $holidays = Yasumi::create('Japan', $year, 'ja_JP');
+        $data = $this->work_schedule_repository->get_schedule($year, $month);
 
         return view('calendar', [
-            'first_day' => $first_day,
-            'last_day' => $last_day,
-            'five_years_ago' => $five_years_ago,
-            'after_five_years' => $after_five_years,
-            'holidays' => $holidays,
+            'data' => $data
         ]);
     }
 
     /**
      * 勤怠記入ページ
      */
-    public function entry_page_show($year, $month, $day)
+    public function entry($year, $month, $day)
     {
-        $projects = DB::table('projects')->get();
+        $data = $this->work_schedule_repository->get_entry($year, $month, $day);
+
         return view('work_schedule', [
             'year' => $year,
             'month' => $month,
             'day' => $day,
-            'projects' => $projects,
+            'data' => $data,
         ]);
     }
-    
+
     /**
      * 勤怠登録
      */

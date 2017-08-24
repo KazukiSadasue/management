@@ -5,6 +5,8 @@ namespace App\Repositories;
 use App\Models\WorkSchedule;
 use Carbon\Carbon;
 use Session;
+use Yasumi\Yasumi;
+use Illuminate\Support\Facades\DB;
 
 class WorkScheduleRepository implements WorkScheduleRepositoryInterface
 {
@@ -25,17 +27,76 @@ class WorkScheduleRepository implements WorkScheduleRepositoryInterface
      */
     public function store($request)
     {
-        $request['user_id'] = Session::get('id');
-        $request['day_at'] = Carbon::createFromDate($request['year'], $request['month'], $request['day']);
-        $request['start_at'] = Carbon::createFromTime($request['start_work_hour'], $request['start_work_min']);
-        $request['finish_at'] = Carbon::createFromTime($request['finish_work_hour'], $request['finish_work_min']);
-        $request['employment'] = implode(',', $request['employment']);
-        if ($request['start_at']->gt($request['finish_at'])) {
-            \Session::flash('error_message', '勤務時間が正しくありません');
-            return redirect("/calendar/" . $request['year'] . "/" . $request['month'] . "/" . $request['day']);
+        if ($request['update'] = false) {
+            $request['user_id'] = Session::get('id');
+            $request['day_at'] = Carbon::createFromDate($request['year'], $request['month'], $request['day']);
+            $request['start_at'] = Carbon::createFromTime($request['start_work_hour'], $request['start_work_min']);
+            $request['finish_at'] = Carbon::createFromTime($request['finish_work_hour'], $request['finish_work_min']);
+            $request['employment'] = implode(',', $request['employment']);
+
+            $this->work_schedule->create($request);
+            return redirect("/calendar/" . $request['year'] . "/" . $request['month']);
+        }
+        //else
+    }
+
+    /**
+     * 勤怠データ取得
+     *
+     * @var int $year
+     * @var int $month
+     * return array
+     */
+    public function get_schedule($year, $month)
+    {
+        $data['first_day'] = Carbon::create($year, $month)->startOfMonth();
+        $data['last_day'] = Carbon::create($year, $month)->endOfMonth();
+        $data['now_date'] = Carbon::now();
+        $data['five_years_ago'] = Carbon::now()->subYear(5);
+        $data['after_five_years'] = Carbon::now()->addYear(5);
+        
+        foreach ( Yasumi::create('Japan', $year, 'ja_JP') as $holiday ) {
+            if( $data['first_day']->format('m') == $holiday->format('m') ) {
+                $data['holidays'][$holiday->format('d')] = $holiday->getName();
+            }
         }
 
-        $this->work_schedule->create($request);
-        return redirect("/calendar/" . $request['year'] . "/" . $request['month']);
+        $schedules = $this->work_schedule->
+            join('projects', 'projects.id', '=', 'work_schedules.project_id')->
+            where('user_id', '=', Session::get('id'))->
+            where('day_at', '>=', $data['first_day'])->
+            where('day_at', '<=', $data['last_day'])->
+            orderBy('day_at', 'asc')->get();
+
+        foreach ( $schedules as $schedule ) {
+            $data['schedules'][$schedule['day_at']] = $schedule;
+        }
+
+        return $data;
+    }
+
+    /**
+     * 勤怠入力ページ取得
+     *
+     * @var int $year
+     * @var int $month
+     * @var int $day
+     * return array
+     */
+    public function get_entry($year, $month, $day)
+    {
+        $data['entry'] = $this->work_schedule->where('user_id', '=', Session::get('id'))->where('day_at', '=', $year . '-' . $month . '-' . $day)->first();
+        $data['projects'] = DB::table('projects')->get();
+        
+        $data['update'] = false; //true:更新処理 false:新規作成
+        if ( isset($data['entry']) ) {
+            $data['update'] = true;
+        }
+
+        foreach ( explode( ',', $data['entry']['employment'] ) as $employment ) {
+            $data['employment'][$employment] = $employment;
+        }
+            // \Log::error( $data['entry']['start_at']['0'].$data['entry']['start_at']['1'] );
+        return $data;
     }
 }

@@ -9,21 +9,21 @@
     </head>
     <body>
         <select id="year">
-            @for ($i = $five_years_ago; $i <= $after_five_years; $i->addYear())
-                <option value={{ $i->year }} @if ($i->year == $last_day->year) selected @endif>{{ $i->year }}</option>
+            @for ($i = $data['five_years_ago']; $i <= $data['after_five_years']; $i->addYear())
+                <option value="{{ $i->year }}" @if ($i->year == $data['last_day']->year) selected @endif>{{ $i->year }}</option>
             @endfor
         </select>
         年
         <select id="month">
             @for ($i = 1; $i <= 12; $i++)
-                <option value={{ $i }} @if ($i == $last_day->month) selected @endif>{{ $i }}</option>
+                <option value="{{ $i }}" @if ($i == $data['last_day']->month) selected @endif>{{ $i }}</option>
             @endfor
         </select>
         月
         <input type="submit" id="send" value="表示">
         {{ Session::get('name') }}さん
         
-        @if (isset($last_day))
+        @if (isset($data['last_day']))
             <table>
                 <tr>
                     <th>日付</th>
@@ -32,10 +32,12 @@
                     <th>時間</th>
                     <th>プロジェクト</th>
                 </tr>
-                @for ($i = $first_day; $i <= $last_day; $i->addDay())
+                @for ($i = $data['first_day']; $i <= $data['last_day']; $i->addDay())
                     <tr>
                         <td
-                            @foreach ($holidays as $holiday) @if ($i->format('n-j') == $holiday->format('n-j')) id="holi" @endif @endforeach
+                            @if ( isset( $data['holidays'][$i->format('d')] ) )
+                                id="holi"
+                            @endif
                             @if ($i->dayOfWeek == "6") id="sat" @endif
                             @if ($i->dayOfWeek == "0") id="sun" @endif 
                         >
@@ -44,16 +46,28 @@
                             </a>
                         </td>
                         <td class="holiday">
-                            @foreach ($holidays as $holiday) @if ($i->format('n-j') == $holiday->format('n-j')) {{ $holiday->getName() }} @endif @endforeach
+                            @if ( isset( $data['holidays'][$i->format('d')] ) )
+                                {{ $data['holidays'][$i->format('d')] }}
+                            @endif
                         </td>
                         <td>
-                            出勤
+                            @if ( isset( $data['schedules'][$i->format('Y-m-d')] ) )
+                                {{ \Config("const.WORK_TYPE." . $data['schedules'][$i->format('Y-m-d')]['type']) }}
+                            @endif
                         </td>
                         <td>
-                            00:00-00:00
+                            @if ( isset( $data['schedules'][$i->format('Y-m-d')] ) )
+                                {{ 
+                                    Carbon\Carbon::createFromFormat('H:i:s', $data['schedules'][$i->format('Y-m-d')]['start_at'])->format('H:i')
+                                    . '-' .
+                                    Carbon\Carbon::createFromFormat('H:i:s', $data['schedules'][$i->format('Y-m-d')]['finish_at'])->format('H:i')
+                                }}
+                            @endif
                         </td>
                         <td>
-                            testProject
+                            @if ( isset( $data['schedules'][$i->format('Y-m-d')] ) )
+                                {{ $data['schedules'][$i->format('Y-m-d')]['project_name'] }}
+                            @endif
                         </td>
                     </tr>
                 @endfor

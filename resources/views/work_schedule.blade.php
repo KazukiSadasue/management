@@ -21,9 +21,6 @@
         </style>
     </head>
     <body>
-        @if (Session::has('error_message'))
-            <p>{{ Session::get('error_message') }}</p>
-        @endif
         @if ($errors->any())
             <ul>
                 @foreach ($errors->all() as $error)
@@ -32,17 +29,24 @@
             </ul>
         @endif   
         <form method="post">
-            <input type="text" name="year" value={{ $year }} class="top-text" readonly>年
-            <input type="text" name="month" value={{ $month }} class="top-text" readonly>月
-            <input type="text" name="day" value={{ $day }} class="top-text" readonly>日
+            <input type="text" name="year" value="{{ $year }}" class="top-text" readonly>年
+            <input type="text" name="month" value="{{ $month }}" class="top-text" readonly>月
+            <input type="text" name="day" value="{{ $day }}" class="top-text" readonly>日
             {{ Session::get('name') }}さん
             <table>
                 <tr>
                     <th>プロジェクト</th>
                     <td>
                         <select name="project_id">
-                            @foreach ($projects as $project)
-                                <option value={{ $project->id }}>{{ $project->project_name }}</option>
+                            @foreach ($data['projects'] as $project)
+                                <option value="{{ $project->id }}"
+                                    @if ( $project->id == old("project_id") )
+                                        selected
+                                    @endif
+                                    @if ( $project->id == $data['entry']['project_id'] )
+                                        selected
+                                    @endif
+                                >{{ $project->project_name }}</option>
                             @endforeach
                         </select>
                     </td>
@@ -50,25 +54,50 @@
                 <tr>
                     <th>出勤タイプ</th>
                     <td>
-                        <input type="radio" name="type" value={{ App\Models\WorkSchedule::TYPE_GO }} checked>{{ Config::get('const.TYPE')["1"] }}
-                        <input type="radio" name="type" value={{ App\Models\WorkSchedule::TYPE_AM }}>{{ Config::get('const.TYPE')["2"] }}
-                        <input type="radio" name="type" value={{ App\Models\WorkSchedule::TYPE_PM }}>{{ Config::get('const.TYPE')["3"] }}
-                        <input type="radio" name="type" value={{ App\Models\WorkSchedule::TYPE_ALL }}>{{ Config::get('const.TYPE')["4"] }}
+                        @foreach (\Config("const.WORK_TYPE") as $key => $type)
+                            <LABEL>
+                                <input type="radio" name="type" value="{{ $key }}"
+                                    @if ( old("type") == $key )
+                                        checked
+                                    @endif
+                                    @if ( $data['entry']['type'] == $key )
+                                        checked
+                                    @endif
+                                >{{ $type }}
+                            </LAVEL>                        
+                        @endforeach
                     </td>
                 </tr>
                 <tr>
                     <th>作業内容</th>
                     <td>
-                        <input type="checkbox" name="employment[]" value={{ App\Models\WorkSchedule::PROGRAM }}>{{ Config::get('const.EMPLOYMENT')["1"] }}
-                        <input type="checkbox" name="employment[]" value={{ App\Models\WorkSchedule::DESIGN }}>{{ Config::get('const.EMPLOYMENT')["2"] }}
-                        <input type="checkbox" name="employment[]" value={{ App\Models\WorkSchedule::SPEC }}>{{ Config::get('const.EMPLOYMENT')["3"] }}
-                        <input type="checkbox" name="employment[]" value={{ App\Models\WorkSchedule::TEST }}>{{ Config::get('const.EMPLOYMENT')["4"] }}
+                        @foreach (\Config("const.EMPLOYMENT") as $key => $employment)
+                            <LABEL>
+                                <input type="checkbox" name="employment[]" value="{{ $key }}"
+                                    @if ( !is_null( old("employment") ) )
+                                        @foreach ( old("employment") as $old )
+                                            @if ($old == $key)
+                                                checked
+                                            @endif
+                                        @endforeach
+                                    @elseif( isset($data['employment'][$key]) )
+                                        checked
+                                    @endif
+                                >{{ $employment }}
+                            </LABEL>
+                        @endforeach
                     </td>
                 </tr>
                 <tr>
                     <th>備考</th>
                     <td>
-                        <input type="text" name="remarks" value="{{ old('remarks') }}">
+                        <input type="text" name="remarks" value=
+                            @if ( !is_null( old('remarks') ) )
+                                "{{ old('remarks') }}"
+                            @elseif ( isset($data['entry']['remarks']) )
+                                "{{ $data['entry']['remarks'] }}"
+                            @endif
+                        >
                     </td>
                 </tr>
                 <tr>
@@ -76,27 +105,42 @@
                     <td>
                         <select name="start_work_hour">
                             @for ($i = 0; $i <= 23; $i++)
-                            <option value={{ $i }} @if ($i == 10) selected @endif>{{ $i }}</option>
+                            <option value="{{ $i }}"
+                            @if ( !is_null( old("start_work_hour") ) )
+                                @if ($i == old("start_work_hour"))
+                                    selected
+                                @endif
+                            @elseif ($i == 10)
+                                selected
+                            @endif>{{ $i }}</option>
                             @endfor
                         </select>時
                         <select name="start_work_min">
                             @for ($i = 0; $i <= 59; $i++)
-                            <option value={{ $i }}>{{ $i }}</option>
+                            <option value="{{ $i }}">{{ $i }}</option>
                             @endfor
                         </select>分～
                         <select name="finish_work_hour">
                             @for ($i = 0; $i <= 23; $i++)
-                            <option value={{ $i }} @if ($i == 19) selected @endif>{{ $i }}</option>
+                            <option value="{{ $i }}"
+                            @if ( !is_null( old("finish_work_hour") ) )
+                                @if ($i == old("finish_work_hour"))
+                                    selected
+                                @endif
+                            @elseif ($i == 19)                            
+                                selected
+                            @endif>{{ $i }}</option>
                             @endfor
                         </select>時
                         <select name="finish_work_min">
                             @for ($i = 0; $i <= 59; $i++)
-                            <option value={{ $i }}>{{ $i }}</option>
+                            <option value="{{ $i }}">{{ $i }}</option>
                             @endfor
                         </select>分
                     </td>
                 </tr>
             </table>
+            <input type="hidden" name="update" value="{{ $data['update'] }}">
             {{ csrf_field() }}
             <input type="submit" value="登録">
         </form>

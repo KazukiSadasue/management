@@ -23,12 +23,22 @@ class WorkSchedulePost extends FormRequest
      */
     public function rules()
     {
-        return [
+        $rules = [
             'project_id' => 'required',
-            'type' => 'required',
+            'type' => 'required|in:' . implode(",", array_keys(\Config("const.WORK_TYPE"))),
             'employment' => 'required',
+            'employment.*' => 'in:' . implode(",", array_keys(\Config("const.EMPLOYMENT"))),
             'remarks' => 'max:255',
-            'start_work_hour' => 'after:11',
+            "start_work_hour" => "workTime",
+        ];
+
+        return $rules;
+    }
+
+    public function messages()
+    {
+        return [
+            'start_work_hour.work_time' =>'開始時間より後の時間を選択してください'
         ];
     }
 }
