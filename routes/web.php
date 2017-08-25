@@ -15,19 +15,31 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/login', 'UserController@index');
-Route::get('/create', 'UserController@create');
-Route::post('/login', 'UserController@login');
-Route::get('/logout', 'UserController@logout');
-Route::post('/create', 'UserController@store');
+Route::get('/user/login', 'UserController@index');
+Route::post('/user/login', 'UserController@login');
+Route::get('/user/create', 'UserController@create');
+Route::post('/user/create', 'UserController@store');
+Route::get('/user/logout', 'UserController@logout');
+Route::get('/admin/login', 'AdminController@index');
+Route::post('/admin/login', 'AdminController@login');
 
-Route::group(['middleware' => ['web', 'check']], function () {
-    Route::get('/start', 'HistoryController@start');
-    Route::get('/finish', 'HistoryController@finish');
-    Route::get('/mypage', 'HistoryController@mypage');
+Route::group(['middleware' => ['web', 'checkLogin']], function () {
+    Route::get('/calendar', 'CalendarController@index');
+    Route::get('/calendar/{year}/{month}', 'CalendarController@list');
+    Route::get('/calendar/{year}/{month}/{day}', 'CalendarController@entry');
+    Route::post('/calendar/{year}/{month}/{day}', 'CalendarController@store');
 });
 
-Route::get('/calendar', 'CalendarController@index');
-Route::get('/calendar/{year}/{month}', 'CalendarController@list');
-Route::get('/calendar/{year}/{month}/{day}', 'CalendarController@entry');
-Route::post('/calendar/{year}/{month}/{day}', 'CalendarController@store');
+Route::group(['middleware' => ['web', 'checkAdmin']], function () {
+    Route::get('/admin/search', 'AdminController@search');
+});
+
+
+
+
+
+
+//使っていない勤怠管理システム
+Route::get('/start', 'HistoryController@start');
+Route::get('/finish', 'HistoryController@finish');
+Route::get('/mypage', 'HistoryController@mypage');

@@ -10,6 +10,16 @@ class User extends Authenticatable
     use Notifiable;
 
     /**
+     * @var int　一般ユーザー
+     **/
+    const GENERAL_USER = 0;
+    
+    /**
+     * @var int　管理ユーザー
+     **/
+    const ADMINISTRATOR = 1;
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array

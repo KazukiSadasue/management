@@ -67,23 +67,8 @@
                     <td>
                         @foreach (\Config("const.EMPLOYMENT") as $key => $employment)
                             <LABEL>
-                                <input type="checkbox" name="employment[]" value="{{ $key }}"
-                                    @if ( !$errors->any())
-                                        @if ( !is_null( old("employment", $data['employment']) ) )
-                                            @foreach ( old("employment", $data['employment']) as $old )
-                                                @if ($old == $key)
-                                                    checked
-                                                @endif
-                                            @endforeach
-                                        @endif
-                                    @elseif ( !is_null( old("employment") ) )
-                                        @foreach ( old("employment") as $old )
-                                            @if ($old == $key)
-                                                checked
-                                            @endif
-                                        @endforeach
-                                    @endif
-                                >{{ $employment }}
+                                {{Form::checkbox("employment[${key}]", $key, isset($data['employment'][$key]) ? $data['employment'][$key] : 0)}}
+                                {{ $employment }}
                             </LABEL>
                         @endforeach
                        

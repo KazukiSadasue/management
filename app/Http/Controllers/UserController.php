@@ -27,16 +27,23 @@ class UserController extends Controller
      */
     public function login(LoginUserPost $request)
     {
-        return $this->user_repository->login($request->all());
+        $this->user_repository->login($request->all());
+        if (Session::has('user')) {
+            return redirect('/calendar');
+        }
+        else{
+            \Session::flash('error_message', 'パスワードが違います');
+            return redirect('/user/login');
+        }
     }
-    
+
     /**
      * ログアウト処理
      */
     public function logout()
     {
         Session::flush();
-        return redirect('login');
+        return redirect('/user/login');
     }
 
     /**
@@ -53,11 +60,17 @@ class UserController extends Controller
     public function store(StoreUserPost $request)
     {
         $this->user_repository->store($request->all());
-        return redirect('login');
+        return redirect('/user/login');
     }
     
+
+
+
+
+
     /**
      * ユーザーページ
+     * 使っていない
      */
     public function mypage()
     {

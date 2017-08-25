@@ -21,7 +21,8 @@
         </select>
         月
         <input type="submit" id="send" value="表示">
-        {{ Session::get('name') }}さん
+        {{ Session::get('user')["name"] }}さん
+        <a id="logout" href="/user/logout">ログアウト</a>
         
         @if (isset($data['last_day']))
             <table>

@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Session;
 
-class CheckLoginMiddleware
+class CheckAdministrator
 {
     /**
      * Handle an incoming request.
@@ -17,10 +17,17 @@ class CheckLoginMiddleware
     public function handle($request, Closure $next)
     {
         if (Session::has('user')) {
-            return $next($request);
+            if (Session::get('user')['approval'] == \App\Models\User::ADMINISTRATOR) {
+                return $next($request);
+            }
+            if (Session::get('user')['approval'] == \App\Models\User::GENERAL_USER) {
+                \Session::flash('error_message', '管理者ユーザーではありません');
+                return redirect('/user/login');   
+            }
         }
-        
+
         \Session::flash('error_message', 'ログインしてください');
         return redirect('/user/login');   
+
     }
 }
