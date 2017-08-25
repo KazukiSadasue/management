@@ -37,7 +37,8 @@ class WorkScheduleRepository implements WorkScheduleRepositoryInterface
             $this->work_schedule->create($request);
             return redirect("/calendar/" . $request['year'] . "/" . $request['month']);
         } else {
-            $this->work_schedule->where('id', '=', $request['id'])->update($request->all)->save;
+            $this->work_schedule->where('id', '=', $request['id'])->first()->update($request);
+            return redirect("/calendar/" . $request['year'] . "/" . $request['month']);
         }
     }
 

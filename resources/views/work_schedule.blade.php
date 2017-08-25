@@ -40,10 +40,7 @@
                         <select name="project_id">
                             @foreach ($data['projects'] as $project)
                                 <option value="{{ $project->id }}"
-                                    @if ( $project->id == old("project_id") )
-                                        selected
-                                    @endif
-                                    @if ( $project->id == $data['entry']['project_id'] )
+                                    @if ( $project->id == old("project_id", $data['entry']['project_id']) )
                                         selected
                                     @endif
                                 >{{ $project->project_name }}</option>
@@ -57,10 +54,7 @@
                         @foreach (\Config("const.WORK_TYPE") as $key => $type)
                             <LABEL>
                                 <input type="radio" name="type" value="{{ $key }}"
-                                    @if ( old("type") == $key )
-                                        checked
-                                    @endif
-                                    @if ( $data['entry']['type'] == $key )
+                                    @if ( $key == old("type", $data['entry']['type']) )
                                         checked
                                     @endif
                                 >{{ $type }}
@@ -74,28 +68,34 @@
                         @foreach (\Config("const.EMPLOYMENT") as $key => $employment)
                             <LABEL>
                                 <input type="checkbox" name="employment[]" value="{{ $key }}"
-                                    @if ( !is_null( old("employment") ) )
+                                    @if ( !$errors->any())
+                                        @if ( !is_null( old("employment", $data['employment']) ) )
+                                            @foreach ( old("employment", $data['employment']) as $old )
+                                                @if ($old == $key)
+                                                    checked
+                                                @endif
+                                            @endforeach
+                                        @endif
+                                    @elseif ( !is_null( old("employment") ) )
                                         @foreach ( old("employment") as $old )
                                             @if ($old == $key)
                                                 checked
                                             @endif
                                         @endforeach
-                                    @elseif( isset($data['employment'][$key]) )
-                                        checked
                                     @endif
                                 >{{ $employment }}
                             </LABEL>
                         @endforeach
+                       
+
                     </td>
                 </tr>
                 <tr>
                     <th>備考</th>
                     <td>
                         <input type="text" name="remarks" value=
-                            @if ( !is_null( old('remarks') ) )
-                                "{{ old('remarks') }}"
-                            @elseif ( isset($data['entry']['remarks']) )
-                                "{{ $data['entry']['remarks'] }}"
+                            @if ( !is_null( old('remarks', $data['entry']['remarks']) ) )
+                                "{{ old('remarks', $data['entry']['remarks']) }}"
                             @endif
                         >
                     </td>
@@ -106,35 +106,55 @@
                         <select name="start_work_hour">
                             @for ($i = 0; $i <= 23; $i++)
                             <option value="{{ $i }}"
-                            @if ( !is_null( old("start_work_hour") ) )
-                                @if ($i == old("start_work_hour"))
+                            @if ( isset( $data['entry']['start_at'] ) )
+                                @if ( $i == old( "start_work_hour", \Carbon\Carbon::createFromFormat("H:i:s", $data['entry']['start_at'])->format('G') ) )
                                     selected
                                 @endif
-                            @elseif ($i == 10)
+                            @elseif ( $i == old( "start_work_hour" ) )
                                 selected
+                            @elseif ( is_null( old("start_work_hour") ) )
+                                @if ( $i == 10 )
+                                    selected
+                                @endif
                             @endif>{{ $i }}</option>
                             @endfor
                         </select>時
                         <select name="start_work_min">
                             @for ($i = 0; $i <= 59; $i++)
-                            <option value="{{ $i }}">{{ $i }}</option>
+                                <option value="{{ $i }}"
+                                    @if ( isset( $data['entry']['start_at'] ) )
+                                        @if ( $i == old( "start_work_min", \Carbon\Carbon::createFromFormat("H:i:s", $data['entry']['start_at'])->format('i') ) )
+                                            selected
+                                        @endif
+                                    @endif
+                                >{{ $i }}</option>
                             @endfor
                         </select>分～
                         <select name="finish_work_hour">
                             @for ($i = 0; $i <= 23; $i++)
                             <option value="{{ $i }}"
-                            @if ( !is_null( old("finish_work_hour") ) )
-                                @if ($i == old("finish_work_hour"))
+                            @if ( isset( $data['entry']['finish_at'] ) )
+                                @if ( $i == old( "finish_work_hour", \Carbon\Carbon::createFromFormat("H:i:s", $data['entry']['finish_at'])->format('G') ) )
                                     selected
                                 @endif
-                            @elseif ($i == 19)                            
+                            @elseif ( $i == old( "finish_work_hour" ) )
                                 selected
+                            @elseif ( is_null( old("finish_work_hour") ) )
+                                @if ( $i == 19 )
+                                    selected
+                                @endif
                             @endif>{{ $i }}</option>
                             @endfor
                         </select>時
                         <select name="finish_work_min">
                             @for ($i = 0; $i <= 59; $i++)
-                            <option value="{{ $i }}">{{ $i }}</option>
+                            <option value="{{ $i }}"
+                                @if ( isset( $data['entry']['finish_at'] ) )
+                                    @if ( $i == old( "finish_work_min", \Carbon\Carbon::createFromFormat("H:i:s", $data['entry']['finish_at'])->format('i') ) )
+                                        selected
+                                    @endif
+                                @endif
+                            >{{ $i }}</option>
                             @endfor
                         </select>分
                     </td>
