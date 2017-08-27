@@ -29,7 +29,7 @@ class AdminController extends Controller
     {
         $this->user_repository->login($request->all());
         if ( Session::get('user')['approval'] == \App\Models\User::ADMINISTRATOR ) {
-            return redirect('/search_user');
+            return redirect('/admin/search');
         }
         if (Session::get('user')['approval'] == \App\Models\User::GENERAL_USER) {
             \Session::flash('error_message', '管理者ユーザーではありません');
@@ -47,5 +47,13 @@ class AdminController extends Controller
     {
         Session::flush();
         return redirect('/user/login');
+    }
+    
+    /**
+     * ユーザー検索
+     */
+    public function search()
+    {
+        return view('search_user');
     }
 }

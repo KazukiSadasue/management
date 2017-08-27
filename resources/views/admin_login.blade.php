@@ -31,6 +31,6 @@
             {{ csrf_field() }}
             <input type="submit" value="ログイン">
         </form>
-        <a href="create">新規作成</a>
+        <a href="/user/login">ユーザーログイン</a>
     </body>
 </html>

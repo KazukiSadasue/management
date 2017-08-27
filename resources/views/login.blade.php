@@ -32,5 +32,6 @@
             <input type="submit" value="ログイン">
         </form>
         <a href="create">新規作成</a>
+        <br><a href="/admin/login">管理者ログイン</a>
     </body>
 </html>
