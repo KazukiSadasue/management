@@ -27,14 +27,7 @@ class UserController extends Controller
      */
     public function login(LoginUserPost $request)
     {
-        $this->user_repository->login($request->all());
-        if (Session::has('user')) {
-            return redirect('/calendar');
-        }
-        else{
-            \Session::flash('error_message', 'パスワードが違います');
-            return redirect('/user/login');
-        }
+        return $this->user_repository->login($request->all());
     }
 
     /**

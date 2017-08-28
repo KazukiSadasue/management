@@ -17,4 +17,10 @@ interface UserRepositoryInterface
      * @var array $data
      */
     public function login($data);
+    
+    /**
+     * ユーザー取得
+     *
+     */
+    public function get_user();
 }

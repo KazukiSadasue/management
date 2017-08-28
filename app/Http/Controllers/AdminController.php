@@ -2,15 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\AdminRepositoryInterface;
+use App\Repositories\WorkScheduleRepositoryInterface;
 use App\Repositories\UserRepositoryInterface;
 use App\Http\Requests\StoreUserPost;
-use App\Http\Requests\LoginUserPost;
+use App\Http\Requests\LoginAdminPost;
+use App\Http\Requests\WorkSchedulePost;
 use Session;
 
 class AdminController extends Controller
 {
-    public function __construct(UserRepositoryInterface $user_repository)
+    public function __construct(AdminRepositoryInterface $admin_repository,
+                                WorkScheduleRepositoryInterface $work_schedule_repository,
+                                UserRepositoryInterface $user_repository)
     {
+        $this->admin_repository = $admin_repository;
+        $this->work_schedule_repository = $work_schedule_repository;
         $this->user_repository = $user_repository;
     }
 
@@ -25,19 +32,9 @@ class AdminController extends Controller
     /**
      * ログイン処理
      */
-    public function login(LoginUserPost $request)
+    public function login(LoginAdminPost $request)
     {
-        $this->user_repository->login($request->all());
-        if ( Session::get('user')['approval'] == \App\Models\User::ADMINISTRATOR ) {
-            return redirect('/admin/search');
-        }
-        if (Session::get('user')['approval'] == \App\Models\User::GENERAL_USER) {
-            \Session::flash('error_message', '管理者ユーザーではありません');
-            return redirect('/admin/login');   
-        }
-
-        \Session::flash('error_message', 'パスワードが違います');
-        return redirect('/admin/login');
+        return $this->admin_repository->login($request->all());
     }
 
     /**
@@ -48,12 +45,49 @@ class AdminController extends Controller
         Session::flush();
         return redirect('/user/login');
     }
+
+    /**
+     * ユーザー検索　トップ
+     */
+    public function search_top()
+    {
+        $users = $this->user_repository->get_user();
+        return view('search_user',['users' => $users]);
+    }
+
+    /**
+     * ユーザー検索　一覧
+     */
+    public function search_list($id, $year, $month)
+    {
+        $data = $this->work_schedule_repository->get_schedule_admin($id, $year, $month);
+        $users = $this->user_repository->get_user();
+        return view('search_list', [
+            'data' => $data,
+            'users' => $users,
+        ]);
+    }
+
+    /**
+     * ユーザー編集
+     */
+    public function edit($id, $year, $month, $day)
+    {
+        $data = $this->work_schedule_repository->get_entry_admin($id, $year, $month, $day);
+        return view('admin_edit', [
+            'id' => $id,
+            'year' => $year,
+            'month' => $month,
+            'day' => $day,
+            'data' => $data,
+        ]);
+    }
     
     /**
-     * ユーザー検索
+     * ユーザー変更、承認
      */
-    public function search()
+    public function store(WorkSchedulePost $request, $id)
     {
-        return view('search_user');
+        return $this->work_schedule_repository->store_admin($id, $request->all());
     }
 }

@@ -40,9 +40,20 @@ class UserRepository implements UserRepositoryInterface
         $user = $this->user->where('email', '=', $data['email'])->first();
         if (Hash::check($data['password'],$user['password']))
         {
-            return Session::put('user', $user);
+            Session::put('user', $user);
+            return redirect('/calendar');
         }
-        return;
+        \Session::flash('error_message', 'パスワードが違います');
+        return redirect('/user/login');
+    }
+
+    /**
+     * ユーザー取得
+     *
+     */
+    public function get_user()
+    {
+        return $this->user->all();
     }
 
 }

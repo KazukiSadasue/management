@@ -24,6 +24,7 @@ class RepositoriesServiceProvider extends ServiceProvider
     public function register()
     {
         \App::bind('App\Repositories\UserRepositoryInterface', 'App\Repositories\UserRepository');
+        \App::bind('App\Repositories\AdminRepositoryInterface', 'App\Repositories\AdminRepository');
         \App::bind('App\Repositories\HistoryRepositoryInterface', 'App\Repositories\HistoryRepository');
         \App::bind('App\Repositories\WorkScheduleRepositoryInterface', 'App\Repositories\WorkScheduleRepository');
     }

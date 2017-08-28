@@ -53,6 +53,6 @@ class WorkSchedule extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'project_id', 'type', 'employment', 'remarks','day_at' , 'start_at', 'finish_at',
+        'user_id', 'project_id', 'type', 'employment', 'remarks','day_at' , 'start_at', 'finish_at', 'approval',
     ];
 }

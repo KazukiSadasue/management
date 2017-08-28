@@ -28,10 +28,16 @@ Route::group(['middleware' => ['web', 'checkLogin']], function () {
     Route::get('/calendar/{year}/{month}', 'CalendarController@list');
     Route::get('/calendar/{year}/{month}/{day}', 'CalendarController@entry');
     Route::post('/calendar/{year}/{month}/{day}', 'CalendarController@store');
+    Route::get('/calendar/confirmed', function() {
+        return view('confirmed');
+    });
 });
 
 Route::group(['middleware' => ['web', 'checkAdmin']], function () {
-    Route::get('/admin/search', 'AdminController@search');
+    Route::get('/admin/search', 'AdminController@search_top');
+    Route::get('/admin/search/{id}/{year}/{month}', 'AdminController@search_list');
+    Route::get('/admin/search/{id}/{year}/{month}/{day}', 'AdminController@edit');
+    Route::post('/admin/search/{id}/{year}/{month}/{day}', 'AdminController@store');
 });
 
 
