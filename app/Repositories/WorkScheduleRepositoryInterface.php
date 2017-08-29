@@ -16,7 +16,7 @@ interface WorkScheduleRepositoryInterface
      *
      * @var array $request
      */
-    public function store_admin($id, $request);
+    public function storeAdmin($id, $request);
     
     /**
      * 勤怠一覧データ取得
@@ -25,7 +25,7 @@ interface WorkScheduleRepositoryInterface
      * @var int $month
      * return array
      */
-    public function get_schedule($year, $month);
+    public function getScheduleList($year, $month);
 
     /**
      * 勤怠データ取得(管理者側)
@@ -35,7 +35,7 @@ interface WorkScheduleRepositoryInterface
      * @var int $id
      * return array
      */
-    public function get_schedule_admin($id, $year, $month);
+    public function getScheduleListAdmin($id, $year, $month);
     
     /**
      * 勤怠入力ページ取得
@@ -45,7 +45,7 @@ interface WorkScheduleRepositoryInterface
      * @var int $day
      * return array
      */
-    public function get_entry($year, $month, $day);
+    public function getSchedule($year, $month, $day);
     
     /**
      * 勤怠入力ページ取得 (管理者)
@@ -56,5 +56,16 @@ interface WorkScheduleRepositoryInterface
      * @var int $id
      * return array
      */
-    public function get_entry_admin($id, $year, $month, $day);
+    public function getScheduleAdmin($id, $year, $month, $day);
+
+    /**
+     * ajax 月の勤務確認 (管理者)
+     *
+     * @var int $year
+     * @var int $month
+     * @var int $day
+     * @var int $id
+     * return array
+     */
+    public function searchAjax();
 }

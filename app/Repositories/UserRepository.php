@@ -51,7 +51,7 @@ class UserRepository implements UserRepositoryInterface
      * ユーザー取得
      *
      */
-    public function get_user()
+    public function getUser()
     {
         return $this->user->all();
     }

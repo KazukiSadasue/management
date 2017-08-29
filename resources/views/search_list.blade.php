@@ -5,16 +5,7 @@
         <title>admin-calendar</title>
         <link rel="stylesheet" type="text/css" href="/css/calendar.css">
         <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
-        <script type="text/javascript">
-        $(function() {
-            $('#send').click(function() {
-                var id = $('#user').val();
-                var year = $('#year').val();
-                var month = $('#month').val();
-                window.location.href = '/admin/search/' + id + '/' + year + '/' + month;
-            });
-        });
-        </script>
+        <script type="text/javascript" src="/js/search.js"></script>
     </head>
     <body>
         <select id="year">
@@ -30,13 +21,16 @@
         </select>
         月
         <select id="user">
-            @foreach ($users as $user) 
-                <option value="{{ $user['id'] }}" @if ($user['id'] == $data['id']) selected @endif>{{ $user['name'] }}</option>
-            @endforeach
         </select>
         <input type="submit" id="send" value="検索">
         <a id="logout" href="/user/logout">ログアウト</a>
         
+        <h3>
+        @foreach ($users as $user) 
+            @if ($user['id'] == $data['id']) {{$user["name"]}} @endif
+        @endforeach
+        さんの勤務表
+        </h3>
         @if (isset($data['last_day']))
             <table>
                 <tr>

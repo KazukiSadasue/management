@@ -37,7 +37,7 @@
                 <tr>
                     <th>プロジェクト</th>
                     <td>
-                        <select name="project_id">
+                        <select name="project_id" @if ( $data['entry']['approval'] == 1 ) disabled @endif>
                             @foreach ($data['projects'] as $project)
                                 <option value="{{ $project->id }}"
                                     @if ( $project->id == old("project_id", $data['entry']['project_id']) )
@@ -57,6 +57,9 @@
                                     @if ( $key == old("type", $data['entry']['type']) )
                                         checked
                                     @endif
+                                    @if ( $data['entry']['approval'] == 1 )
+                                        disabled
+                                    @endif
                                 >{{ $type }}
                             </LAVEL>                        
                         @endforeach
@@ -67,7 +70,10 @@
                     <td>
                         @foreach (\Config("const.EMPLOYMENT") as $key => $employment)
                             <LABEL>
-                                {{Form::checkbox("employment[${key}]", $key, isset($data['employment'][$key]) ? $data['employment'][$key] : 0)}}
+                                {{Form::checkbox("employment[${key}]", $key,
+                                    isset($data['employment'][$key]) ? true : false,
+                                    [$data['entry']['approval'] == 1 ? 'disabled' : '']
+                                )}}
                                 {{ $employment }}
                             </LABEL>
                         @endforeach
@@ -78,7 +84,12 @@
                 <tr>
                     <th>備考</th>
                     <td>
-                        <input type="text" name="remarks" value=
+                        <input type="text" name="remarks" 
+                            @if ( $data['entry']['approval'] == 1 )
+                                disabled
+                            @endif
+
+                            value=
                             @if ( !is_null( old('remarks', $data['entry']['remarks']) ) )
                                 "{{ old('remarks', $data['entry']['remarks']) }}"
                             @endif
@@ -88,7 +99,7 @@
                 <tr>
                     <th>勤務時間</th>
                     <td>
-                        <select name="start_work_hour">
+                        <select name="start_work_hour" @if ( $data['entry']['approval'] == 1 ) disabled @endif>
                             @for ($i = 0; $i <= 23; $i++)
                             <option value="{{ $i }}"
                             @if ( isset( $data['entry']['start_at'] ) )
@@ -104,7 +115,7 @@
                             @endif>{{ $i }}</option>
                             @endfor
                         </select>時
-                        <select name="start_work_min">
+                        <select name="start_work_min" @if ( $data['entry']['approval'] == 1 ) disabled @endif>
                             @for ($i = 0; $i <= 59; $i++)
                                 <option value="{{ $i }}"
                                     @if ( isset( $data['entry']['start_at'] ) )
@@ -115,7 +126,7 @@
                                 >{{ $i }}</option>
                             @endfor
                         </select>分～
-                        <select name="finish_work_hour">
+                        <select name="finish_work_hour" @if ( $data['entry']['approval'] == 1 ) disabled @endif>
                             @for ($i = 0; $i <= 23; $i++)
                             <option value="{{ $i }}"
                             @if ( isset( $data['entry']['finish_at'] ) )
@@ -131,7 +142,7 @@
                             @endif>{{ $i }}</option>
                             @endfor
                         </select>時
-                        <select name="finish_work_min">
+                        <select name="finish_work_min" @if ( $data['entry']['approval'] == 1 ) disabled @endif>
                             @for ($i = 0; $i <= 59; $i++)
                             <option value="{{ $i }}"
                                 @if ( isset( $data['entry']['finish_at'] ) )
@@ -148,7 +159,9 @@
             <input type="hidden" name="update" value="{{ $data['update'] }}">
             <input type="hidden" name="id" value="{{ $data['entry']['id'] }}">
             {{ csrf_field() }}
-            <input type="submit" value="登録">
+            @if ( $data['entry']['approval'] == 0 )
+                <input type="submit" value="登録">
+            @endif
         </form>
         <a href=/calendar/{{ $year }}/{{ $month }}>戻る</a>
     </body>

@@ -4,16 +4,7 @@
         <meta charset="utf-8">
         <title>Search</title>
         <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
-        <script type="text/javascript">
-        $(function() {
-            $('#send').click(function() {
-                var id = $('#user').val();
-                var year = $('#year').val();
-                var month = $('#month').val();
-                window.location.href = '/admin/search/' + id + '/' + year + '/' + month;
-            });
-        });
-        </script>
+        <script type="text/javascript" src="/js/search.js"></script>
     </head>
     <body>
         <h1>ユーザー検索</h1>
@@ -30,9 +21,6 @@
         </select>
         月
         <select id="user">
-            @foreach ($users as $user) 
-                <option value="{{ $user['id'] }}">{{ $user['name'] }}</option>
-            @endforeach
         </select>
         <input type="submit" id="send" value="検索">
         <br><a id="logout" href="/user/logout">ログアウト</a>

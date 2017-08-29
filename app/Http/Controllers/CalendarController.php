@@ -29,7 +29,7 @@ class CalendarController extends Controller
      */
     public function list($year, $month)
     {
-        $data = $this->work_schedule_repository->get_schedule($year, $month);
+        $data = $this->work_schedule_repository->getScheduleList($year, $month);
         return view('calendar', [
             'data' => $data
         ]);
@@ -40,11 +40,8 @@ class CalendarController extends Controller
      */
     public function entry($year, $month, $day)
     {
-        $data = $this->work_schedule_repository->get_entry($year, $month, $day);
+        $data = $this->work_schedule_repository->getSchedule($year, $month, $day);
 
-        if( $data['entry']['approval'] == 1 ) {
-            return redirect("/calendar/confirmed");
-        }
         return view('work_schedule', [
             'year' => $year,
             'month' => $month,

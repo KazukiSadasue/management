@@ -7,6 +7,8 @@ use Carbon\Carbon;
 use Session;
 use Yasumi\Yasumi;
 use Illuminate\Support\Facades\DB;
+use Response;
+use Input;
 
 class WorkScheduleRepository implements WorkScheduleRepositoryInterface
 {
@@ -25,19 +27,29 @@ class WorkScheduleRepository implements WorkScheduleRepositoryInterface
      *
      * @var array $request
      */
-    public function store($request)
+    public function store($request, $id = null)
     {
         $request['start_at'] = Carbon::createFromTime($request['start_work_hour'], $request['start_work_min']);
         $request['finish_at'] = Carbon::createFromTime($request['finish_work_hour'], $request['finish_work_min']);
         $request['employment'] = implode(',', $request['employment']);
+        if ( !isset( $request['approval'] ) ) {
+            $request['approval'] = 0;
+        }
+
         if ($request['update'] == false) {
-            $request['user_id'] = Session::get('user')['id'];
+            $request['user_id'] = is_null($id) ? Session::get('user')['id'] : $id;
             $request['day_at'] = Carbon::createFromDate($request['year'], $request['month'], $request['day']);
 
             $this->work_schedule->create($request);
+            if ( !isset( $request['approval'] ) ) {
+                return redirect("/admin/search/" . $id . "/" . $request['year'] . "/" . $request['month']);
+            }
             return redirect("/calendar/" . $request['year'] . "/" . $request['month']);
         } else {
             $this->work_schedule->where('id', '=', $request['id'])->first()->update($request);
+            if ( !isset( $request['approval'] ) ) {
+                return redirect("/admin/search/" . $id . "/" . $request['year'] . "/" . $request['month']);
+            }
             return redirect("/calendar/" . $request['year'] . "/" . $request['month']);
         }
     }
@@ -47,7 +59,7 @@ class WorkScheduleRepository implements WorkScheduleRepositoryInterface
      *
      * @var array $request
      */
-    public function store_admin($id, $request)
+    public function storeAdmin($id, $request)
     {
         $request['start_at'] = Carbon::createFromTime($request['start_work_hour'], $request['start_work_min']);
         $request['finish_at'] = Carbon::createFromTime($request['finish_work_hour'], $request['finish_work_min']);
@@ -75,7 +87,7 @@ class WorkScheduleRepository implements WorkScheduleRepositoryInterface
      * @var int $month
      * return array
      */
-    public function get_schedule($year, $month)
+    public function getScheduleList($year, $month)
     {
         $data['first_day'] = Carbon::create($year, $month)->startOfMonth();
         $data['last_day'] = Carbon::create($year, $month)->endOfMonth();
@@ -111,7 +123,7 @@ class WorkScheduleRepository implements WorkScheduleRepositoryInterface
      * @var int $id
      * return array
      */
-    public function get_schedule_admin($id, $year, $month)
+    public function getScheduleListAdmin($id, $year, $month)
     {
         $data['first_day'] = Carbon::create($year, $month)->startOfMonth();
         $data['last_day'] = Carbon::create($year, $month)->endOfMonth();
@@ -148,7 +160,7 @@ class WorkScheduleRepository implements WorkScheduleRepositoryInterface
      * @var int $day
      * return array
      */
-    public function get_entry($year, $month, $day)
+    public function getSchedule($year, $month, $day)
     {
         $data['entry'] = $this->work_schedule->where('user_id', '=', Session::get('user')['id'])->where('day_at', '=', $year . '-' . $month . '-' . $day)->first();
         $data['projects'] = DB::table('projects')->get();
@@ -173,7 +185,7 @@ class WorkScheduleRepository implements WorkScheduleRepositoryInterface
      * @var int $id
      * return array
      */
-    public function get_entry_admin($id, $year, $month, $day)
+    public function getScheduleAdmin($id, $year, $month, $day)
     {
         $data['entry'] = $this->work_schedule->where('user_id', '=', $id)->where('day_at', '=', $year . '-' . $month . '-' . $day)->first();
         $data['projects'] = DB::table('projects')->get();
@@ -187,5 +199,27 @@ class WorkScheduleRepository implements WorkScheduleRepositoryInterface
             $data['employment'][$employment] = $employment;
         }
         return $data;
+    }
+    
+    /**
+     * ajax 月の勤務確認 (管理者)
+     *
+     * @var int $year
+     * @var int $month
+     * @var int $id
+     * return array
+     */
+    public function searchAjax()
+    {
+        $first_day = Carbon::create(Input::get('year'), Input::get('month'))->startOfMonth()->format('Y-m-d');
+        $last_day = Carbon::create(Input::get('year'), Input::get('month'))->endOfMonth()->format('Y-m-d');
+        
+        $users = $this->work_schedule
+        ->join('users', 'users.id', '=', 'work_schedules.user_id')
+        ->select('user_id', 'name')->distinct()
+        ->where('day_at', '>=', $first_day)
+        ->where('day_at', '<=', $last_day)->get();
+
+        return Response::make($users);
     }
 }
