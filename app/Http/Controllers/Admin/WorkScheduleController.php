@@ -20,9 +20,9 @@ class WorkScheduleController extends Controller
      */
     public function search($id = 1, $year = 2017, $month = 8)
     {
-        $data = $this->work_schedule_repository->getScheduleListAdmin($id, $year, $month);
+        $data = $this->work_schedule_repository->getScheduleList($year, $month, $id);
         $users = $this->user_repository->getUser();
-        return view('search_list', [
+        return view('/admin/search_list', [
             'data' => $data,
             'users' => $users,
         ]);
@@ -33,8 +33,8 @@ class WorkScheduleController extends Controller
      */
     public function edit($id, $year, $month, $day)
     {
-        $data = $this->work_schedule_repository->getScheduleAdmin($id, $year, $month, $day);
-        return view('admin_edit', [
+        $data = $this->work_schedule_repository->getSchedule($year, $month, $day, $id);
+        return view('/admin/admin_edit', [
             'id' => $id,
             'year' => $year,
             'month' => $month,

@@ -19,7 +19,7 @@ class LoginController extends Controller
      */
     public function index()
     {
-        return view('admin_login');
+        return view('admin/admin_login');
     }
 
     /**
