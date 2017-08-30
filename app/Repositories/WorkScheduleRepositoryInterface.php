@@ -5,12 +5,14 @@ namespace App\Repositories;
 interface WorkScheduleRepositoryInterface
 {    
     /**
-     * 勤怠データ登録
+     * 勤怠データ保存
      *
-     * @var array $request
+     * @param array $request
+     * @param int $id
+     * @return void
      */
-    public function store($request);
-    
+    public function save($request, $id = null);
+
     /**
      * 勤怠一覧データ取得
      *
@@ -39,5 +41,13 @@ interface WorkScheduleRepositoryInterface
      * @var int $id
      * return array
      */
-    public function searchAjax();
+    public function calendarAjax();
+
+    /**
+     * 詳細検索
+     *
+     * @param array $request
+     * @return void
+     */
+    public function search($condition);
 }

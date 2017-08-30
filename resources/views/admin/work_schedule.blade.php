@@ -160,6 +160,6 @@
             {{ csrf_field() }}
             <input type="submit" value="登録">
         </form>
-        <a href=/admin/search/{{ $id }}/{{ $year }}/{{ $month }}>戻る</a>
+        <a href=/admin/calendar/{{ $id }}/{{ $year }}/{{ $month }}>戻る</a>
     </body>
 </html>

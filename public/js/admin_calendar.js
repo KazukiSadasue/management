@@ -1,7 +1,7 @@
 $(function() {
     $.ajax({
         type: "GET",
-        url: "/admin/search/searchAjax",
+        url: "/admin/calendar/calendarAjax",
         data:
         {
             "year": $('#year').val(),
@@ -24,19 +24,19 @@ $(function() {
     $('#send').click(function() {
         var id = $('#user').val();
         if ( id == "" ) {
-            window.location.href = '/admin/search';
+            window.location.href = '/admin/calendar';
         }
         else {
             var year = $('#year').val();
             var month = $('#month').val();
-            window.location.href = '/admin/search/' + id + '/' + year + '/' + month;
+            window.location.href = '/admin/calendar/' + id + '/' + year + '/' + month;
         }
     });
 
     $('#year').change(function(){
         $.ajax({
             type: "GET",
-            url: "/admin/search/searchAjax",
+            url: "/admin/calendar/calendarAjax",
             data:
             {
                 "year": $('#year').val(),
@@ -60,7 +60,7 @@ $(function() {
     $('#month').change(function(){
         $.ajax({
             type: "GET",
-            url: "/admin/search/searchAjax",
+            url: "/admin/calendar/calendarAjax",
             data:
             {
                 "year": $('#year').val(),

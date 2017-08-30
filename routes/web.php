@@ -24,19 +24,22 @@ Route::get('/user/logout', 'Admin\LoginController@logout');
 Route::get('/admin/login', 'Admin\LoginController@index');
 Route::post('/admin/login', 'Admin\LoginController@login');
 
-Route::group(['middleware' => ['web', 'checkLogin']], function () {
-    Route::get('/calendar', 'CalendarController@index');
-    Route::get('/calendar/{year}/{month}', 'CalendarController@list');
-    Route::get('/calendar/{year}/{month}/{day}', 'CalendarController@entry');
-    Route::post('/calendar/{year}/{month}/{day}', 'CalendarController@store');
+Route::group(['prefix' => 'calendar', 'middleware' => ['web', 'checkLogin']], function () {
+    Route::get('/', 'CalendarController@index');
+    Route::get('/{year}/{month}', 'CalendarController@list');
+    Route::get('/{year}/{month}/{day}', 'CalendarController@entry');
+    Route::post('/{year}/{month}/{day}', 'CalendarController@save');
 });
 
-Route::group(['middleware' => ['web', 'checkAdmin']], function () {
-    Route::get('/admin/search', 'Admin\WorkScheduleController@search');
-    Route::get('/admin/search/{id}/{year}/{month}', 'Admin\WorkScheduleController@search');
-    Route::get('/admin/search/{id}/{year}/{month}/{day}', 'Admin\WorkScheduleController@edit');
-    Route::post('/admin/search/{id}/{year}/{month}/{day}', 'Admin\WorkScheduleController@store');
-    Route::get('/admin/search/searchAjax', 'Admin\WorkScheduleController@searchAjax');
+Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['web', 'checkAdmin']], function () {
+    Route::get('/calendar', 'WorkScheduleController@calendar');
+    Route::get('/calendar/{id}/{year}/{month}', 'WorkScheduleController@calendar');
+    Route::get('/calendar/{id}/{year}/{month}/{day}', 'WorkScheduleController@workSchedule');
+    Route::post('/calendar/{id}/{year}/{month}/{day}', 'WorkScheduleController@save');
+    Route::get('/calendar/calendarAjax', 'WorkScheduleController@calendarAjax');
+
+    Route::get('/search', 'WorkScheduleController@search');
+    // Route::get('/search/detail', '');
 });
 
 

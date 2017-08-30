@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Repositories\WorkScheduleRepositoryInterface;
 use App\Repositories\UserRepositoryInterface;
 use App\Http\Requests\WorkSchedulePost;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
+use DB;
 
 class WorkScheduleController extends Controller
 {
@@ -16,13 +19,19 @@ class WorkScheduleController extends Controller
         $this->user_repository = $user_repository;
     }
     /**
-     * ユーザー検索
+     * ユーザーカレンダー表示
      */
-    public function search($id = 1, $year = 2017, $month = 8)
+    public function calendar($id = null, $year = null, $month = null)
     {
+        if ($year == null) {
+            $year = Carbon::now()->year;
+        }
+        if ($month == null) {
+            $month = Carbon::now()->month;
+        }
         $data = $this->work_schedule_repository->getScheduleList($year, $month, $id);
         $users = $this->user_repository->getUser();
-        return view('/admin/search_list', [
+        return view('/admin/calendar', [
             'data' => $data,
             'users' => $users,
         ]);
@@ -31,10 +40,10 @@ class WorkScheduleController extends Controller
     /**
      * スケジュール編集
      */
-    public function edit($id, $year, $month, $day)
+    public function workSchedule($id, $year, $month, $day)
     {
         $data = $this->work_schedule_repository->getSchedule($year, $month, $day, $id);
-        return view('/admin/admin_edit', [
+        return view('/admin/work_schedule', [
             'id' => $id,
             'year' => $year,
             'month' => $month,
@@ -46,16 +55,31 @@ class WorkScheduleController extends Controller
     /**
      * スケジュール変更、承認
      */
-    public function store(WorkSchedulePost $request, $id)
+    public function save(WorkSchedulePost $request, $id)
     {
-        return $this->work_schedule_repository->store($request->all(), $id);
+        $this->work_schedule_repository->save($request->all(), $id);
+        return redirect("/admin/calendar/" . $id . "/" . $request['year'] . "/" . $request['month']);
     }
     
     /**
      * ajax 月の勤怠チェック
      */
-    public function searchAjax()
+    public function calendarAjax()
     {
-        return $this->work_schedule_repository->searchAjax();
+        return $this->work_schedule_repository->calendarAjax();
+    }
+
+    /**
+     * 詳細検索
+     *
+     * @return void
+     */
+    public function search(Request $request)
+    {
+        $data = $this->work_schedule_repository->search($request->all());
+
+        return view('/admin/search',[
+            'data' => $data,
+        ]);
     }
 }

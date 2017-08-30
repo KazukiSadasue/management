@@ -5,7 +5,7 @@
         <title>admin-calendar</title>
         <link rel="stylesheet" type="text/css" href="/css/calendar.css">
         <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
-        <script type="text/javascript" src="/js/search.js"></script>
+        <script type="text/javascript" src="/js/admin_calendar.js"></script>
     </head>
     <body>
         <select id="year">
@@ -23,13 +23,13 @@
         <select id="user">
         </select>
         <input type="submit" id="send" value="検索">
+        <a href="/admin/search">詳細検索</a>
         <a id="logout" href="/user/logout">ログアウト</a>
         
         <h3>
         @foreach ($users as $user) 
-            @if ($user['id'] == $data['id']) {{$user["name"]}} @endif
+            @if ($user['id'] == $data['id']) {{$user["name"]}} さんの勤務表 @endif
         @endforeach
-        さんの勤務表
         </h3>
         @if (isset($data['last_day']))
             <table>
@@ -39,6 +39,7 @@
                     <th>出勤状況</th>
                     <th>時間</th>
                     <th>プロジェクト</th>
+                    <th>承認</th>
                 </tr>
                 @for ($i = $data['first_day']; $i <= $data['last_day']; $i->addDay())
                     <tr>
@@ -49,7 +50,7 @@
                             @if ($i->dayOfWeek == "6") id="sat" @endif
                             @if ($i->dayOfWeek == "0") id="sun" @endif 
                         >
-                            <a href=/admin/search/{{ $data['id'] }}/{{ $i->format('Y/n/j') }}>
+                            <a class="day" href=/admin/calendar/{{ $data['id'] }}/{{ $i->format('Y/n/j') }}>
                                 {{ $i->format('j日') }}{{ Config::get('const.WEEKDAY')[$i->dayOfWeek] }}
                             </a>
                         </td>
@@ -75,6 +76,11 @@
                         <td>
                             @if ( isset( $data['schedules'][$i->format('Y-m-d')] ) )
                                 {{ $data['schedules'][$i->format('Y-m-d')]['project_name'] }}
+                            @endif
+                        </td>
+                        <td>
+                            @if ( isset( $data['schedules'][$i->format('Y-m-d')] ) )
+                                {{ $data['schedules'][$i->format('Y-m-d')]['approval'] == 1 ? '済' : '未' }}
                             @endif
                         </td>
                     </tr>

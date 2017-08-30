@@ -53,8 +53,9 @@ class CalendarController extends Controller
     /**
      * 勤怠登録
      */
-    public function store(WorkSchedulePost $request)
+    public function save(WorkSchedulePost $request)
     {
-        return $this->work_schedule_repository->store($request->all());
+        $this->work_schedule_repository->save($request->all());
+        return redirect("/calendar/" . $request['year'] . "/" . $request['month']);
     }
 }

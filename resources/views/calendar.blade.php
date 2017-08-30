@@ -32,6 +32,7 @@
                     <th>出勤状況</th>
                     <th>時間</th>
                     <th>プロジェクト</th>
+                    <th>承認</th>
                 </tr>
                 @for ($i = $data['first_day']; $i <= $data['last_day']; $i->addDay())
                     <tr>
@@ -68,6 +69,11 @@
                         <td>
                             @if ( isset( $data['schedules'][$i->format('Y-m-d')] ) )
                                 {{ $data['schedules'][$i->format('Y-m-d')]['project_name'] }}
+                            @endif
+                        </td>
+                        <td>
+                            @if ( isset( $data['schedules'][$i->format('Y-m-d')] ) )
+                                {{ $data['schedules'][$i->format('Y-m-d')]['approval'] == 1 ? '済' : '未' }}
                             @endif
                         </td>
                     </tr>

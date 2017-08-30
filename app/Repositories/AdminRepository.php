@@ -31,7 +31,7 @@ class AdminRepository implements AdminRepositoryInterface
         if (Hash::check($data['password'],$admin['password']))
         {
             Session::put('admin', $admin);
-            return redirect('/admin/search');
+            return redirect('/admin/calendar');
         }
         \Session::flash('error_message', 'パスワードが違います');
         return redirect('/admin/login');

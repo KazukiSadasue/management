@@ -19,15 +19,17 @@ class WorkScheduleRepository implements WorkScheduleRepositoryInterface
     */
     public function __construct(WorkSchedule $work_schedule)
     {
-    $this->work_schedule = $work_schedule;
+        $this->work_schedule = $work_schedule;
     }
 
     /**
-     * 勤怠データ登録
+     * 勤怠データ保存
      *
-     * @var array $request
+     * @param array $request
+     * @param int $id
+     * @return void
      */
-    public function store($request, $id = null)
+    public function save($request, $id = null)
     {
         $request['start_at'] = Carbon::createFromTime($request['start_work_hour'], $request['start_work_min']);
         $request['finish_at'] = Carbon::createFromTime($request['finish_work_hour'], $request['finish_work_min']);
@@ -35,24 +37,46 @@ class WorkScheduleRepository implements WorkScheduleRepositoryInterface
         if ( !isset( $request['approval'] ) ) {
             $request['approval'] = 0;
         }
-
         if ($request['update'] == false) {
-            $request['user_id'] = is_null($id) ? Session::get('user')['id'] : $id;
-            $request['day_at'] = Carbon::createFromDate($request['year'], $request['month'], $request['day']);
-
-            $this->work_schedule->create($request);
-            if ( Session::has('admin') ) {
-                return redirect("/admin/search/" . $id . "/" . $request['year'] . "/" . $request['month']);
-            }
-            return redirect("/calendar/" . $request['year'] . "/" . $request['month']);
+            $this->create($request, $id);
         } else {
-            $this->work_schedule->where('id', '=', $request['id'])->first()->update($request);
-            if ( Session::has('admin') ) {
-                return redirect("/admin/search/" . $id . "/" . $request['year'] . "/" . $request['month']);
-            }
-            return redirect("/calendar/" . $request['year'] . "/" . $request['month']);
+            $this->update($request);
         }
     }
+
+    /**
+     * 勤怠データ作成
+     *
+     * @param array $request
+     * @param int $id
+     * @return void
+     */
+    private function create($request, $id)
+    {
+        $request['user_id'] = is_null($id) ? Session::get('user')['id'] : $id;
+        $request['day_at'] = Carbon::createFromDate($request['year'], $request['month'], $request['day']);
+
+        $this->work_schedule->create($request);
+    }
+    
+    /**
+     * 勤怠データ更新
+     *
+     * @param array $request
+     * @return void
+     */
+    private function update($request)
+    {
+        $this->work_schedule->where('id', '=', $request['id'])->first()->update($request);
+    }
+
+    /**
+     * 勤怠データ登録
+     *
+     * @var array $request
+     */
+    
+
 
     /**
      * 勤怠データ取得
@@ -86,7 +110,6 @@ class WorkScheduleRepository implements WorkScheduleRepositoryInterface
             $data['schedules'][$schedule['day_at']] = $schedule;
         }
 
-        \Log::error($data);
         return $data;
     }
 
@@ -124,7 +147,7 @@ class WorkScheduleRepository implements WorkScheduleRepositoryInterface
      * @var int $id
      * return array
      */
-    public function searchAjax()
+    public function calendarAjax()
     {
         $first_day = Carbon::create(Input::get('year'), Input::get('month'))->startOfMonth()->format('Y-m-d');
         $last_day = Carbon::create(Input::get('year'), Input::get('month'))->endOfMonth()->format('Y-m-d');
@@ -136,5 +159,38 @@ class WorkScheduleRepository implements WorkScheduleRepositoryInterface
         ->where('day_at', '<=', $last_day)->get();
 
         return Response::make($users);
+    }
+
+    /**
+     * 詳細検索
+     *
+     * @param array $request
+     * @return void
+     */
+    public function search($condition)
+    {
+        $work_schedules = $this->work_schedule
+            ->select('name', DB::raw('COUNT(*) as target'))
+            ->join('users', 'users.id', '=', 'work_schedules.user_id');
+        
+        if( isset($condition['start_date']) ){
+            $work_schedules = $work_schedules->where('day_at', '>=', $condition['start_date']);
+        }
+        if( isset($condition['end_date']) ){
+            $work_schedules = $work_schedules->where('day_at', '<=', $condition['end_date']);
+        }
+        if( isset($condition['project_id']) ){
+            $work_schedules = $work_schedules->where('project_id', '=', $condition['project_id']);
+        }
+
+        $data['work_schedules'] = $work_schedules->groupBy('name')->get();
+
+        $projects = DB::table('projects')->get();
+        foreach ($projects as $project) {
+            $data['projects'][$project->id] = $project->project_name;
+        }
+
+        \Log::error($data);
+        return $data;
     }
 }

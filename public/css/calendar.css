@@ -11,6 +11,10 @@ table td{
     border-width: 1px 0px;
 }
 
+.day {
+    color: inherit;
+}
+
 .holiday {
     color: red;
     font-size: 12px;
@@ -26,12 +30,4 @@ table td{
 
 #holi {
     color: red;
-}
-
-a {
-    color: inherit;
-}
-
-#logout{
-    color: blue;
 }
