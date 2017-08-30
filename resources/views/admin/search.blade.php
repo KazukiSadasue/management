@@ -51,11 +51,8 @@
                     <td>
                         @foreach (\Config("const.WORK_TYPE") as $key => $type)
                             <LABEL>
-                                <input type="radio" name="type" value="{{ $key }}"
-                                    @if ( $key == old("type") )
-                                        checked
-                                    @endif
-                                >{{ $type }}
+                                {{ Form::radio('type', $key) }}
+                                {{ $type }}
                             </LAVEL>                        
                         @endforeach
                     </td>
@@ -63,14 +60,12 @@
                 <tr>
                     <th>作業内容</th>
                     <td>
-                         @foreach (\Config("const.EMPLOYMENT") as $key => $employment)
+                        @foreach (\Config("const.EMPLOYMENT") as $key => $employment)
                             <LABEL>
                                 {{Form::checkbox("employment[${key}]", $key)}}
                                 {{ $employment }}
                             </LABEL>
-                        @endforeach 
-                       
-
+                        @endforeach
                     </td>
                 </tr>
                 <tr>

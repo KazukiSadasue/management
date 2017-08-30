@@ -182,6 +182,16 @@ class WorkScheduleRepository implements WorkScheduleRepositoryInterface
         if( isset($condition['project_id']) ){
             $work_schedules = $work_schedules->where('project_id', '=', $condition['project_id']);
         }
+        if( isset($condition['type']) ){
+            $work_schedules = $work_schedules->where('type', '=', $condition['type']);
+        }
+        if ( isset($condition['employment']) ) {
+            $employment = implode(',', $condition['employment']);
+            $work_schedules = $work_schedules->where('employment', '=', $employment);
+        }
+        
+        
+        
 
         $data['work_schedules'] = $work_schedules->groupBy('name')->get();
 
@@ -190,7 +200,6 @@ class WorkScheduleRepository implements WorkScheduleRepositoryInterface
             $data['projects'][$project->id] = $project->project_name;
         }
 
-        \Log::error($data);
         return $data;
     }
 }

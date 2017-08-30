@@ -43,7 +43,7 @@
                             @if ($i->dayOfWeek == "6") id="sat" @endif
                             @if ($i->dayOfWeek == "0") id="sun" @endif 
                         >
-                            <a href=/calendar/{{ $i->format('Y/n/j') }}>
+                            <a class="day" href=/calendar/{{ $i->format('Y/n/j') }}>
                                 {{ $i->format('j日') }}{{ Config::get('const.WEEKDAY')[$i->dayOfWeek] }}
                             </a>
                         </td>
