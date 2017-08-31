@@ -43,7 +43,7 @@
                  <tr>
                     <th>プロジェクト</th>
                     <td>
-                         {{ Form::select('project_id', $data['projects']) }} 
+                         {{ Form::select('project_id', $data['projects'], null, ['placeholder' => '------']) }} 
                     </td>
                 </tr> 
                 <tr>
@@ -71,48 +71,10 @@
                 <tr>
                     <th>勤務時間</th>
                     <td>
-                        <select name="start_work_hour">
-                            @for ($i = 0; $i <= 23; $i++)
-                            <option value="{{ $i }}"
-                            @if ( $i == old( "start_work_hour" ) )
-                                selected
-                            @elseif ( is_null( old("start_work_hour") ) )
-                                @if ( $i == 10 )
-                                    selected
-                                @endif
-                            @endif>{{ $i }}</option>
-                            @endfor
-                        </select>時
-                        <select name="start_work_min">
-                            @for ($i = 0; $i <= 59; $i++)
-                                <option value="{{ $i }}"
-                                    @if ( $i == old( "start_work_min" ) )
-                                        selected
-                                    @endif
-                                >{{ $i }}</option>
-                            @endfor
-                        </select>分～
-                        <select name="finish_work_hour">
-                            @for ($i = 0; $i <= 23; $i++)
-                            <option value="{{ $i }}"
-                            @if ( $i == old( "finish_work_hour" ) )
-                                selected
-                            @elseif ( is_null( old("finish_work_hour") ) )
-                                @if ( $i == 19 )
-                                    selected
-                                @endif
-                            @endif>{{ $i }}</option>
-                            @endfor
-                        </select>時
-                        <select name="finish_work_min">
-                            @for ($i = 0; $i <= 59; $i++)
-                            <option value="{{ $i }}"
-                                @if ( $i == old( "finish_work_min" ) )
-                                    selected
-                                @endif
-                            >{{ $i }}</option>
-                            @endfor
-                        </select>分
+                        {{ Form::selectRange('start_work_hour', 0, 23, null, ['placeholder' => '--']) }}時
+                        {{ Form::selectRange('start_work_min', 0, 59, null, ['placeholder' => '--']) }}分～
+                        {{ Form::selectRange('finish_work_hour', 0, 23, null, ['placeholder' => '--']) }}時
+                        {{ Form::selectRange('finish_work_min', 0, 59, null, ['placeholder' => '--']) }}分
                     </td>
                 </tr>
                 <tr>
@@ -120,12 +82,13 @@
                         承認
                     </th>
                     <td>
-                        {{ Form::select('approval',['1' => '承認済', '0' => '未承認']) }}
+                        {{ Form::select('approval',['1' => '承認済', '0' => '未承認'], null, ['placeholder' => '---']) }}
                     </td>
                 </tr>
             </table>
             {{ csrf_field() }}
             <input type="submit" value="検索">
+            <a href="/admin/search">リセット</a>
         </form> 
         <a href="/admin/calendar">戻る</a> 
         

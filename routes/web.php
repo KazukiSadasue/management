@@ -39,7 +39,7 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['web
     Route::get('/calendar/calendarAjax', 'WorkScheduleController@calendarAjax');
 
     Route::get('/search', 'WorkScheduleController@search');
-    // Route::get('/search/detail', '');
+    Route::get('/search/detail', 'WorkScheduleController@detail');
 });
 
 

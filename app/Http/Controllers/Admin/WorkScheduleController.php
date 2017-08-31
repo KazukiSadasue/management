@@ -76,6 +76,20 @@ class WorkScheduleController extends Controller
      */
     public function search(Request $request)
     {
+        $data = $this->work_schedule_repository->countSearch($request->all());
+
+        return view('/admin/search',[
+            'data' => $data,
+        ]);
+    }
+    
+    /**
+     * 検索結果詳細
+     *
+     * @return void
+     */
+    public function detail(Request $request)
+    {
         $data = $this->work_schedule_repository->search($request->all());
 
         return view('/admin/search',[

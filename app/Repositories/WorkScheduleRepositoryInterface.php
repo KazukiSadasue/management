@@ -49,5 +49,5 @@ interface WorkScheduleRepositoryInterface
      * @param array $request
      * @return void
      */
-    public function search($condition);
+    public function countSearch($condition);
 }

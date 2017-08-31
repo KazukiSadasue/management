@@ -71,14 +71,6 @@ class WorkScheduleRepository implements WorkScheduleRepositoryInterface
     }
 
     /**
-     * 勤怠データ登録
-     *
-     * @var array $request
-     */
-    
-
-
-    /**
      * 勤怠データ取得
      *
      * @var int $year
@@ -167,12 +159,35 @@ class WorkScheduleRepository implements WorkScheduleRepositoryInterface
      * @param array $request
      * @return void
      */
-    public function search($condition)
+    public function countSearch($condition)
     {
         $work_schedules = $this->work_schedule
             ->select('name', DB::raw('COUNT(*) as target'))
             ->join('users', 'users.id', '=', 'work_schedules.user_id');
         
+        $work_schedules = $this->searchCondition($condition, $work_schedules);
+
+        $data['work_schedules'] = $work_schedules->groupBy('name')->get();
+
+        $projects = DB::table('projects')->get();
+        foreach ($projects as $project) {
+            $data['projects'][$project->id] = $project->project_name;
+        }
+
+        return $data;
+    }
+
+    // public function detailSearch($condition)
+    // {
+    //     //
+    // }
+
+    /**
+     * 検索条件
+     *
+     */
+    private function searchCondition($condition, $work_schedules)
+    {
         if( isset($condition['start_date']) ){
             $work_schedules = $work_schedules->where('day_at', '>=', $condition['start_date']);
         }
@@ -189,17 +204,26 @@ class WorkScheduleRepository implements WorkScheduleRepositoryInterface
             $employment = implode(',', $condition['employment']);
             $work_schedules = $work_schedules->where('employment', '=', $employment);
         }
-        
-        
-        
-
-        $data['work_schedules'] = $work_schedules->groupBy('name')->get();
-
-        $projects = DB::table('projects')->get();
-        foreach ($projects as $project) {
-            $data['projects'][$project->id] = $project->project_name;
+        if ( isset($condition['start_work_hour']) ) {
+            if (isset($condition['start_work_min'])) {
+                $work_schedules = $work_schedules->where('start_at', '>=', $condition['start_work_hour'] . ":" . $condition['start_work_min']);
+            }
+            else {
+                $work_schedules = $work_schedules->where('start_at', '>=', $condition['start_work_hour'] . ":00");
+            }
+        }
+        if ( isset($condition['finish_work_hour']) ) {
+            if (isset($condition['finish_work_min'])) {
+                $work_schedules = $work_schedules->where('finish_at', '<=', $condition['finish_work_hour'] . ":" . $condition['finish_work_min']);
+            }
+            else {
+                $work_schedules = $work_schedules->where('finish_at', '<=', $condition['finish_work_hour'] . ":00");
+            }
+        }
+        if ( isset($condition['approval']) ) {
+            $work_schedules = $work_schedules->where('approval', '=', $condition['approval']);
         }
 
-        return $data;
+        return $work_schedules;
     }
 }
