@@ -76,10 +76,19 @@ class WorkScheduleController extends Controller
      */
     public function search(Request $request)
     {
-        $data = $this->work_schedule_repository->countSearch($request->all());
+        $conditions = $request->all();
 
+        $data = $this->work_schedule_repository->search($conditions);
+
+        $projects = DB::table('projects')->get();
+        foreach ($projects as $project) {
+            $data['projects'][$project->id] = $project->project_name;
+        }
+
+        var_dump($conditions);
         return view('/admin/search',[
             'data' => $data,
+            'conditions' => $conditions,
         ]);
     }
     
@@ -90,10 +99,11 @@ class WorkScheduleController extends Controller
      */
     public function detail(Request $request)
     {
-        $data = $this->work_schedule_repository->search($request->all());
-
-        return view('/admin/search',[
-            'data' => $data,
+        $a = [1,2,3,4];
+        "1,2,3,4";
+        $data = $this->work_schedule_repository->searchDetail($request->all());
+        return view('/admin/search_detail',[
+            'schedules' => $data['work_schedules'],
         ]);
     }
 }

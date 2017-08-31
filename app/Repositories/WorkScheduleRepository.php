@@ -159,28 +159,36 @@ class WorkScheduleRepository implements WorkScheduleRepositoryInterface
      * @param array $request
      * @return void
      */
-    public function countSearch($condition)
+    public function search($condition)
     {
         $work_schedules = $this->work_schedule
-            ->select('name', DB::raw('COUNT(*) as target'))
+            ->select('users.id', 'users.name', DB::raw('COUNT(*) as target'))
             ->join('users', 'users.id', '=', 'work_schedules.user_id');
         
         $work_schedules = $this->searchCondition($condition, $work_schedules);
 
-        $data['work_schedules'] = $work_schedules->groupBy('name')->get();
-
-        $projects = DB::table('projects')->get();
-        foreach ($projects as $project) {
-            $data['projects'][$project->id] = $project->project_name;
-        }
+        $data['work_schedules'] = $work_schedules->groupBy('users.id')->get();
 
         return $data;
     }
 
-    // public function detailSearch($condition)
-    // {
-    //     //
-    // }
+    /**
+     * 結果詳細
+     *
+     * @param array $condition
+     * @return array
+     */
+    public function searchDetail($condition)
+    {
+        $work_schedules = $this->work_schedule->join('projects', 'projects.id', '=', 'work_schedules.project_id');
+        $work_schedules = $this->searchCondition($condition, $work_schedules);
+
+
+        $data['work_schedules'] = $work_schedules
+            ->where('user_id', '=', $condition['user_id'])
+            ->orderBy('day_at', 'asc')->get();
+        return $data;
+    }
 
     /**
      * 検索条件
@@ -200,10 +208,14 @@ class WorkScheduleRepository implements WorkScheduleRepositoryInterface
         if( isset($condition['type']) ){
             $work_schedules = $work_schedules->where('type', '=', $condition['type']);
         }
+
+
         if ( isset($condition['employment']) ) {
             $employment = implode(',', $condition['employment']);
             $work_schedules = $work_schedules->where('employment', '=', $employment);
         }
+
+
         if ( isset($condition['start_work_hour']) ) {
             if (isset($condition['start_work_min'])) {
                 $work_schedules = $work_schedules->where('start_at', '>=', $condition['start_work_hour'] . ":" . $condition['start_work_min']);

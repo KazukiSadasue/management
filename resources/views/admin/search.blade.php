@@ -49,9 +49,13 @@
                 <tr>
                     <th>出勤タイプ</th>
                     <td>
+                        <LABEL>
+                            {{ Form::radio("type","") }}
+                            すべて
+                        </LAVEL>
                         @foreach (\Config("const.WORK_TYPE") as $key => $type)
                             <LABEL>
-                                {{ Form::radio('type', $key) }}
+                                {{ Form::radio("type", $key) }}
                                 {{ $type }}
                             </LAVEL>                        
                         @endforeach
@@ -62,7 +66,7 @@
                     <td>
                         @foreach (\Config("const.EMPLOYMENT") as $key => $employment)
                             <LABEL>
-                                {{Form::checkbox("employment[${key}]", $key)}}
+                                {{Form::checkbox("employment[$key]", $key)}}
                                 {{ $employment }}
                             </LABEL>
                         @endforeach
@@ -90,21 +94,27 @@
             <input type="submit" value="検索">
             <a href="/admin/search">リセット</a>
         </form> 
-        <a href="/admin/calendar">戻る</a> 
         
         <table>
             <tr>
                 <th>ユーザー名</th>
                 <th>該当数</th>
-                <th>詳細</th>
+                <th></th>
             </tr>
+            
             @foreach ( $data['work_schedules'] as $work_schedule )
             <tr>
                 <td>{{ $work_schedule['name'] }}</td>
                 <td>{{ $work_schedule['target'] }}</td>
-                <td><a href="">詳細</a></td>
+                <td>
+                    <input type="button" onclick="submit({{ $work_schedule['id'] }})" value="詳細">
+                </td>
             </tr>
             @endforeach
         </table>
+        
+        <input type="hidden" name="condition" value="{{ json_encode($conditions) }}">
+        
+        <a href="/admin/calendar">戻る</a> 
     </body>
 </html>
