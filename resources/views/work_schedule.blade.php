@@ -163,6 +163,6 @@
                 <input type="submit" value="登録">
             @endif
         </form>
-        <a href=/calendar/{{ $year }}/{{ $month }}>戻る</a>
+        <a href=/user/calendar/{{ $year }}/{{ $month }}>戻る</a>
     </body>
 </html>

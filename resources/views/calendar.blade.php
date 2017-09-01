@@ -23,6 +23,7 @@
         <input type="submit" id="send" value="表示">
         {{ Session::get('user')["name"] }}さん
         <a id="logout" href="/user/logout">ログアウト</a>
+        <a href="/user/setting">設定</a>
         
         @if (isset($data['last_day']))
             <table>
@@ -43,7 +44,7 @@
                             @if ($i->dayOfWeek == "6") id="sat" @endif
                             @if ($i->dayOfWeek == "0") id="sun" @endif 
                         >
-                            <a class="day" href=/calendar/{{ $i->format('Y/n/j') }}>
+                            <a class="day" href=/user/calendar/{{ $i->format('Y/n/j') }}>
                                 {{ $i->format('j日') }}{{ Config::get('const.WEEKDAY')[$i->dayOfWeek] }}
                             </a>
                         </td>

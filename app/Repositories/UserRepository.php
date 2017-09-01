@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Session;
 use Carbon\Carbon;
+use Intervention\Image\Facades\Image;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -41,7 +42,7 @@ class UserRepository implements UserRepositoryInterface
         if (Hash::check($data['password'],$user['password']))
         {
             Session::put('user', $user);
-            return redirect('/calendar');
+            return redirect('/user/calendar');
         }
         \Session::flash('error_message', 'パスワードが違います');
         return redirect('/user/login');
@@ -54,6 +55,30 @@ class UserRepository implements UserRepositoryInterface
     public function getUser()
     {
         return $this->user->all();
+    }
+
+    /**
+     * ユーザー情報更新
+     *
+     * @param array $condition
+     * @return void
+     */
+    public function save($condition)
+    {
+        $image = Image::make($condition['fileName']->getRealPath());
+        $fileName = $condition['fileName']->getClientOriginalName();
+        $path = public_path() . '/images/';
+
+        $image->save($path . $fileName)
+            ->resize(200,200)
+            ->save($path . 'thumbnail-' . $fileName);
+
+        $picture_path = '/images/thumbnail-' . $fileName;
+        $this->user->where('id', '=', Session::get('user')['id'])->update(['image' => $picture_path]);
+
+        Session::push('user', Session::get('user'));
+
+        return;
     }
 
 }

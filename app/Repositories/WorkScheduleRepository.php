@@ -162,7 +162,7 @@ class WorkScheduleRepository implements WorkScheduleRepositoryInterface
     public function search($condition)
     {
         $work_schedules = $this->work_schedule
-            ->select('users.id', 'users.name', DB::raw('COUNT(*) as target'))
+            ->select('users.id as user_id', 'users.name', DB::raw('COUNT(*) as target'))
             ->join('users', 'users.id', '=', 'work_schedules.user_id');
         
         $work_schedules = $this->searchCondition($condition, $work_schedules);
@@ -208,14 +208,13 @@ class WorkScheduleRepository implements WorkScheduleRepositoryInterface
         if( isset($condition['type']) ){
             $work_schedules = $work_schedules->where('type', '=', $condition['type']);
         }
-
-
         if ( isset($condition['employment']) ) {
-            $employment = implode(',', $condition['employment']);
-            $work_schedules = $work_schedules->where('employment', '=', $employment);
+            $work_schedules = $work_schedules->where(function($query) use($condition){
+                foreach ($condition['employment'] as $employment) {
+                    $query = $query->orwhereRaw( 'FIND_IN_SET(?, employment)',[ $employment ] );
+                }
+            });
         }
-
-
         if ( isset($condition['start_work_hour']) ) {
             if (isset($condition['start_work_min'])) {
                 $work_schedules = $work_schedules->where('start_at', '>=', $condition['start_work_hour'] . ":" . $condition['start_work_min']);

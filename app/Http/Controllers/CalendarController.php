@@ -21,7 +21,7 @@ class CalendarController extends Controller
     {
         $year = Carbon::now()->year;
         $month = Carbon::now()->month;
-        return redirect("/calendar/${year}/${month}");
+        return redirect("/user/calendar/${year}/${month}");
     }
     
     /**
@@ -56,6 +56,6 @@ class CalendarController extends Controller
     public function save(WorkSchedulePost $request)
     {
         $this->work_schedule_repository->save($request->all());
-        return redirect("/calendar/" . $request['year'] . "/" . $request['month']);
+        return redirect("/user/calendar/" . $request['year'] . "/" . $request['month']);
     }
 }

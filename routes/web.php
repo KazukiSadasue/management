@@ -24,11 +24,14 @@ Route::get('/user/logout', 'Admin\LoginController@logout');
 Route::get('/admin/login', 'Admin\LoginController@index');
 Route::post('/admin/login', 'Admin\LoginController@login');
 
-Route::group(['prefix' => 'calendar', 'middleware' => ['web', 'checkLogin']], function () {
+Route::group(['prefix' => 'user', 'middleware' => ['web', 'checkLogin']], function () {
     Route::get('/', 'CalendarController@index');
-    Route::get('/{year}/{month}', 'CalendarController@list');
-    Route::get('/{year}/{month}/{day}', 'CalendarController@entry');
-    Route::post('/{year}/{month}/{day}', 'CalendarController@save');
+    Route::get('/calendar', 'CalendarController@index');
+    Route::get('/calendar/{year}/{month}', 'CalendarController@list');
+    Route::get('/calendar/{year}/{month}/{day}', 'CalendarController@entry');
+    Route::post('/calendar/{year}/{month}/{day}', 'CalendarController@save');
+    Route::get('/setting', 'UserController@setting');
+    Route::post('/setting', 'UserController@saveSetting');
 });
 
 Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['web', 'checkAdmin']], function () {

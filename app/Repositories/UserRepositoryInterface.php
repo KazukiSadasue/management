@@ -23,4 +23,12 @@ interface UserRepositoryInterface
      *
      */
     public function getUser();
+
+    /**
+     * ユーザー情報更新
+     *
+     * @param array $condition
+     * @return void
+     */
+    public function save($condition);
 }

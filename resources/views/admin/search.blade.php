@@ -19,6 +19,16 @@
                 width:50px;
             }
         </style>
+        <script type="text/javascript">
+            function detail(user_id) {
+                var condition = location.search;
+                if (condition == "") {
+                    location.href = "/admin/search/detail?user_id=" + user_id;
+                } else {
+                    location.href = "/admin/search/detail" + condition + "&user_id=" + user_id;
+                }  
+            }
+        </script>
     </head>
     <body>
           @if ($errors->any())
@@ -43,7 +53,7 @@
                  <tr>
                     <th>プロジェクト</th>
                     <td>
-                         {{ Form::select('project_id', $data['projects'], null, ['placeholder' => '------']) }} 
+                         {{ Form::select('project_id', $projects, null, ['placeholder' => '------']) }} 
                     </td>
                 </tr> 
                 <tr>
@@ -107,14 +117,11 @@
                 <td>{{ $work_schedule['name'] }}</td>
                 <td>{{ $work_schedule['target'] }}</td>
                 <td>
-                    <input type="button" onclick="submit({{ $work_schedule['id'] }})" value="詳細">
+                    <input type="button" onclick="detail({{ $work_schedule['user_id'] }})" value="詳細">
                 </td>
             </tr>
             @endforeach
         </table>
-        
-        <input type="hidden" name="condition" value="{{ json_encode($conditions) }}">
-        
         <a href="/admin/calendar">戻る</a> 
     </body>
 </html>

@@ -4,6 +4,6 @@ $(function()
     {
         var year = $('#year').val();
         var month = $('#month').val();
-        window.location.href = '/calendar' + '/' + year + '/' + month;
+        window.location.href = '/user/calendar' + '/' + year + '/' + month;
     });
 });
