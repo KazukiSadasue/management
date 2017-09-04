@@ -31,3 +31,11 @@ table td{
 #holi {
     color: red;
 }
+
+#icon {
+    width: 40px;
+}
+
+.name {
+    font-size: 30px;
+}

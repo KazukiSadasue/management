@@ -8,22 +8,27 @@
         <script type="text/javascript" src="/js/calendar.js"></script>
     </head>
     <body>
-        <select id="year">
-            @for ($i = $data['five_years_ago']; $i <= $data['after_five_years']; $i->addYear())
-                <option value="{{ $i->year }}" @if ($i->year == $data['last_day']->year) selected @endif>{{ $i->year }}</option>
-            @endfor
-        </select>
-        年
-        <select id="month">
-            @for ($i = 1; $i <= 12; $i++)
-                <option value="{{ $i }}" @if ($i == $data['last_day']->month) selected @endif>{{ $i }}</option>
-            @endfor
-        </select>
-        月
-        <input type="submit" id="send" value="表示">
-        {{ Session::get('user')["name"] }}さん
+        <span class="name">{{ Session::get('user')["name"] }}さん</span>
+        <img id='icon' src="{{ Session::get('user')['image'] }}">
         <a id="logout" href="/user/logout">ログアウト</a>
         <a href="/user/setting">設定</a>
+        
+        <div>
+            <select id="year">
+                @for ($i = $data['five_years_ago']; $i <= $data['after_five_years']; $i->addYear())
+                    <option value="{{ $i->year }}" @if ($i->year == $data['last_day']->year) selected @endif>{{ $i->year }}</option>
+                @endfor
+            </select>
+            年
+            <select id="month">
+                @for ($i = 1; $i <= 12; $i++)
+                    <option value="{{ $i }}" @if ($i == $data['last_day']->month) selected @endif>{{ $i }}</option>
+                @endfor
+            </select>
+            月
+            <input type="submit" id="send" value="表示">
+        </div>
+        <hr>
         
         @if (isset($data['last_day']))
             <table>

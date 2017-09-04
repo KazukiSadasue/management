@@ -30,8 +30,8 @@ Route::group(['prefix' => 'user', 'middleware' => ['web', 'checkLogin']], functi
     Route::get('/calendar/{year}/{month}', 'CalendarController@list');
     Route::get('/calendar/{year}/{month}/{day}', 'CalendarController@entry');
     Route::post('/calendar/{year}/{month}/{day}', 'CalendarController@save');
-    Route::get('/setting', 'UserController@setting');
-    Route::post('/setting', 'UserController@saveSetting');
+    Route::get('/setting', 'UserController@edit');
+    Route::post('/setting', 'UserController@update');
 });
 
 Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['web', 'checkAdmin']], function () {

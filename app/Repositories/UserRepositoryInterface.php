@@ -25,10 +25,18 @@ interface UserRepositoryInterface
     public function getUser();
 
     /**
+     * 画像アップロード
+     *
+     * @param array $condition
+     * @return void
+     */
+    public function upload($condition);
+
+    /**
      * ユーザー情報更新
      *
      * @param array $condition
      * @return void
      */
-    public function save($condition);
+    public function update($condition);
 }

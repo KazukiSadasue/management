@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Repositories\UserRepositoryInterface;
 use App\Http\Requests\StoreUserPost;
 use App\Http\Requests\LoginUserPost;
+use App\Http\Requests\SettingUserPost;
 use Illuminate\Http\Request;
 use Session;
 use Intervention\Image\Facades\Image;
@@ -59,24 +60,28 @@ class UserController extends Controller
     }
     
     /**
-     * ユーザー設定
+     * ユーザー編集
      *
      * @return void
      */
-    public function setting()
+    public function edit()
     {
-        var_dump(Session::get('user')['image']);
         return view('setting');
     }
-    
+
     /**
      * ユーザー設定変更
      *
      * @return void
      */
-    public function saveSetting(Request $request)
+    public function update(SettingUserPost $request)
     {
-        $this->user_repository->save($request->all());
+        if ($request->input('upload')) {
+            $this->user_repository->upload($request->all());
+        }
+        if( $request->input('update')) {
+            $this->user_repository->update($request->all());
+        }
         return redirect('user/setting');
     }
 
