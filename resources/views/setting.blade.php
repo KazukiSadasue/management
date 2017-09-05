@@ -9,6 +9,9 @@
 <body>
  
 <h1>ユーザー編集</h1>
+@if (Session::has('flash_message'))
+    {{ Session::get('flash_message') }}
+@endif
 @if ($errors->any())
     <ul>
         @foreach ($errors->all() as $error)

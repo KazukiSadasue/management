@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\User;
+use App\Models\EditLog;
 use Illuminate\Support\Facades\Hash;
 use Session;
 use Carbon\Carbon;
@@ -69,9 +70,9 @@ class UserRepository implements UserRepositoryInterface
      * @param array $condition
      * @return void
      */
-    public function upload($condition)
+    public function upload($data)
     {
-        if ( isset($condition['fileName']) ) {
+        if ( isset($data['fileName']) ) {
             //フォルダの作成
             $path = public_path() . '/images/' . Session::get('user')['id'] . '/icon';
             if(! \File::exists($path)) {
@@ -82,8 +83,8 @@ class UserRepository implements UserRepositoryInterface
             \File::delete(public_path() . Session::get('user')['image']);
 
             //新しい画像追加
-            $image = Image::make($condition['fileName']->getRealPath());
-            $fileName = $condition['fileName']->getClientOriginalName();
+            $image = Image::make($data['fileName']->getRealPath());
+            $fileName = $data['fileName']->getClientOriginalName();
 
             if ($image->width() >= $image->height()) {
                 $image->resize(200, null, function ($constraint) {
@@ -114,25 +115,35 @@ class UserRepository implements UserRepositoryInterface
      * @param array $condition
      * @return void
      */
-    public function update($condition) 
+    public function update($data) 
     {
-        if ($condition['name'] != Session::get('user')['name']) {
-            $this->user->where('id', '=', Session::get('user')['id'])->update(['name' => $condition['name']]);
-            
-            Session::put(['user.name' => $condition['name']]);
-            DB::table('edit_logs')->insert([
-                'user_id' => Session::get('user')['id'],
-                'name' => true,
-            ]);
-        }
+        $user = Session::get('user');
+        $name = $data['name'] != $user['name'] ? true : false;
+        $pref = $data['pref'] != $user['pref'] ? true : false;
 
-        // if ($condition['pref'] != Session::get('user')['pref']) {
-        //     $this->user->where('id', '=', Session::get('user')['id'])->update(['pref' => $condition['pref']]);
-        //     Session::put(['user.pref' => $condition['pref']]);
-        //     DB::table('edit_logs')->insert([
-        //         'user_id' => Session::get('user')['id'],
-        //         'pref' => true,
-        //     ]);
-        // }
+        DB::beginTransaction();
+        try {
+            $this->user->where('id', '=', $user['id'])->update([
+                'name' => $data['name'],
+                'pref' => $data['pref'],
+            ]);
+
+            EditLog::create([
+                'user_id' => $user['id'],
+                'name' => $name,
+                'pref' => $pref,
+            ]);
+
+            Session::put([
+                'user.name' => $data['name'],
+                'user.pref' => $data['pref'],
+            ]);
+            DB::commit();
+            
+        } catch (\Exception $e) {
+            DB::rollback();
+            \Log::error($e);
+            Session::flash('flash_message', 'エラーが起こりました');
+        }
     }
 }

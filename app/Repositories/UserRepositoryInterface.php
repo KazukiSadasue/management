@@ -30,7 +30,7 @@ interface UserRepositoryInterface
      * @param array $condition
      * @return void
      */
-    public function upload($condition);
+    public function upload($data);
 
     /**
      * ユーザー情報更新
@@ -38,5 +38,5 @@ interface UserRepositoryInterface
      * @param array $condition
      * @return void
      */
-    public function update($condition);
+    public function update($data);
 }
