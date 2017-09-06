@@ -20,9 +20,9 @@ class ProjectsTableSeeder extends Seeder
         DB::table('projects')->delete();
         $faker = Faker::create('ja_JP');
 
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < 100; $i++) {
             Project::create([
-                'project_name' => $faker->unique()->jobTitle,
+                'project_name' => $faker->unique()->company,
             ]);
         }
     }

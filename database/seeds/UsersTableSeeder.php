@@ -20,7 +20,7 @@ class UsersTableSeeder extends Seeder
         DB::table('users')->delete();
         $faker = Faker::create('ja_JP');
 
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 500; $i++) {
             User::create([
                 'name' => $faker->name,
                 'email' => $faker->unique()->email,
