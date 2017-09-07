@@ -9,10 +9,16 @@ $(function() {
         },
         success: function(users)
         {
+            var old_user_id = $('#old_user_id').val();
+
             $('#user > option').remove();
             $('#user').append($('<option>').val("").text('ユーザー選択'));
-            users.forEach(function(val, i) {
-                $('#user').append($('<option>').val(val['user_id']).text(val['name']));
+            users.forEach(function(user, i) {
+                if ( old_user_id == user['user_id'] ) {
+                    $('#user').append($('<option>').val(user['user_id']).text(user['name']).prop('selected', true));
+                } else {
+                    $('#user').append($('<option>').val(user['user_id']).text(user['name']));
+                }
             });
         },
         error: function(XMLHttpRequest,textStatus,errorThrown)
@@ -44,10 +50,16 @@ $(function() {
             },
             success: function(users)
             {
+                var old_user_id = $('#old_user_id').val();
+
                 $('#user > option').remove();
                 $('#user').append($('<option>').val("").text('ユーザー選択'));
-                users.forEach(function(val, i) {
-                    $('#user').append($('<option>').val(val['user_id']).text(val['name']));
+                users.forEach(function(user, i) {
+                    if ( old_user_id == user['user_id'] ) {
+                        $('#user').append($('<option>').val(user['user_id']).text(user['name']).prop('selected', true));
+                    } else {
+                        $('#user').append($('<option>').val(user['user_id']).text(user['name']));
+                    }
                 });
             },
             error: function(XMLHttpRequest,textStatus,errorThrown)
@@ -68,10 +80,16 @@ $(function() {
             },
             success: function(users)
             {
+                var old_user_id = $('#old_user_id').val();
+
                 $('#user > option').remove();
                 $('#user').append($('<option>').val("").text('ユーザー選択'));
-                users.forEach(function(val, i) {
-                    $('#user').append($('<option>').val(val['user_id']).text(val['name']));
+                users.forEach(function(user, i) {
+                    if ( old_user_id == user['user_id'] ) {
+                        $('#user').append($('<option>').val(user['user_id']).text(user['name']).prop('selected', true));
+                    } else {
+                        $('#user').append($('<option>').val(user['user_id']).text(user['name']));
+                    }
                 });
             },
             error: function(XMLHttpRequest,textStatus,errorThrown)

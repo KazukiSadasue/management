@@ -30,7 +30,7 @@ class WorkSchedulesTableSeeder extends Seeder
 
         $faker = Faker::create('ja_JP');
 
-        for ($i = 1; $i <= 10000; $i++) {
+        for ($i = 1; $i <= 100000; $i++) {
             $user_id = $faker->randomElement( array_column($users, 'id') );
 
             //作成したダミーユーザーが重複していたら、ユニークなday_atを作成
@@ -74,14 +74,17 @@ class WorkSchedulesTableSeeder extends Seeder
 
             //employment 作成
             $element_count = $faker->numberBetween( 1, count(\Config("const.EMPLOYMENT")) );
-            $employments = $faker->randomElements( array_keys(\Config("const.EMPLOYMENT")), $element_count );
+            $employments = array_rand( \Config("const.EMPLOYMENT"), $element_count );
+            if ( is_array( $employments ) ) {
+                $employments = implode(',', $employments);
+            }
             
             //ダミー作成
             WorkSchedule::create([
                 'user_id' => $user_id,
                 'project_id' => $faker->randomElement( $project_ids ),
                 'type' => $type,
-                'employment' => implode(',', $employments),
+                'employment' => $employments,
                 'day_at' => $day_at,
                 'start_at' => $start_at,
                 'finish_at' => $finish_at,

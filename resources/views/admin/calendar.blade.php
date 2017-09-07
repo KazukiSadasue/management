@@ -22,6 +22,7 @@
         月
         <select id="user">
         </select>
+        <input type="hidden" id="old_user_id" value="{{ $data['id'] }}">
         <input type="submit" id="send" value="検索">
         <a href="/admin/search">詳細検索</a>
         <a id="logout" href="/user/logout">ログアウト</a>
@@ -66,11 +67,13 @@
                         </td>
                         <td>
                             @if ( isset( $data['schedules'][$i->format('Y-m-d')] ) )
-                                {{ 
-                                    Carbon\Carbon::createFromFormat('H:i:s', $data['schedules'][$i->format('Y-m-d')]['start_at'])->format('H:i')
-                                    . '-' .
-                                    Carbon\Carbon::createFromFormat('H:i:s', $data['schedules'][$i->format('Y-m-d')]['finish_at'])->format('H:i')
-                                }}
+                                @if( ! is_null( $data['schedules'][$i->format('Y-m-d')]['start_at'] ) )
+                                    {{ 
+                                        Carbon\Carbon::createFromFormat('H:i:s', $data['schedules'][$i->format('Y-m-d')]['start_at'])->format('H:i')
+                                        . '-' .
+                                        Carbon\Carbon::createFromFormat('H:i:s', $data['schedules'][$i->format('Y-m-d')]['finish_at'])->format('H:i')
+                                    }}
+                                @endif
                             @endif
                         </td>
                         <td>

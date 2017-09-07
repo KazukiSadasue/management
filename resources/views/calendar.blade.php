@@ -65,11 +65,13 @@
                         </td>
                         <td>
                             @if ( isset( $data['schedules'][$i->format('Y-m-d')] ) )
-                                {{ 
-                                    Carbon\Carbon::createFromFormat('H:i:s', $data['schedules'][$i->format('Y-m-d')]['start_at'])->format('H:i')
-                                    . '-' .
-                                    Carbon\Carbon::createFromFormat('H:i:s', $data['schedules'][$i->format('Y-m-d')]['finish_at'])->format('H:i')
-                                }}
+                                @if ( ! is_null( $data['schedules'][$i->format('Y-m-d')]['start_at'] ) )
+                                    {{ 
+                                        Carbon\Carbon::createFromFormat('H:i:s', $data['schedules'][$i->format('Y-m-d')]['start_at'])->format('H:i')
+                                        . '-' .
+                                        Carbon\Carbon::createFromFormat('H:i:s', $data['schedules'][$i->format('Y-m-d')]['finish_at'])->format('H:i')
+                                    }}
+                                @endif
                             @endif
                         </td>
                         <td>

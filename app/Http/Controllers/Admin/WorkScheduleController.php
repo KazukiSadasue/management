@@ -90,7 +90,7 @@ class WorkScheduleController extends Controller
             'projects' => $projects,
         ]);
     }
-    
+
     /**
      * 検索結果詳細
      *

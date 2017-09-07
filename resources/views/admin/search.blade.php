@@ -45,9 +45,9 @@
                         勤務日
                     </th>
                     <td>
-                        {{ Form::date('start_date', \Carbon\Carbon::now()) }}
+                        {{ Form::date( 'start_date' ) }}
                         ～
-                        {{ Form::date('end_date', \Carbon\Carbon::now()) }}
+                        {{ Form::date( 'end_date' ) }}
                     </td>
                 </tr>
                  <tr>
@@ -59,15 +59,11 @@
                 <tr>
                     <th>出勤タイプ</th>
                     <td>
-                        <LABEL>
-                            {{ Form::radio("type","") }}
-                            すべて
-                        </LAVEL>
+                            {{ Form::radio("type", "", true, ['id' => 'type0']) }}
+                            {{ Form::label("type0", "すべて") }}
                         @foreach (\Config("const.WORK_TYPE") as $key => $type)
-                            <LABEL>
-                                {{ Form::radio("type", $key) }}
-                                {{ $type }}
-                            </LAVEL>                        
+                                {{ Form::radio("type", $key, false, ['id' => "type${key}"]) }}
+                                {{ Form::label("type${key}", $type) }}
                         @endforeach
                     </td>
                 </tr>
@@ -75,10 +71,8 @@
                     <th>作業内容</th>
                     <td>
                         @foreach (\Config("const.EMPLOYMENT") as $key => $employment)
-                            <LABEL>
-                                {{Form::checkbox("employment[$key]", $key)}}
-                                {{ $employment }}
-                            </LABEL>
+                                {{Form::checkbox("employment[$key]", $key, false, ['id' => "employment${key}"])}}
+                                {{ Form::label("employment${key}", $employment) }}
                         @endforeach
                     </td>
                 </tr>

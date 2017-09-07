@@ -25,11 +25,13 @@
                     </td>
                     <td>{{ \Config("const.WORK_TYPE." . $schedule['type']) }}</td>
                     <td>
-                        {{ 
-                            Carbon\Carbon::createFromFormat('H:i:s', $schedule['start_at'])->format('H:i')
-                            . '-' .
-                            Carbon\Carbon::createFromFormat('H:i:s', $schedule['finish_at'])->format('H:i')
-                        }}
+                        @if ( ! is_null($schedule['start_at'] ) )
+                            {{ 
+                                Carbon\Carbon::createFromFormat('H:i:s', $schedule['start_at'])->format('H:i')
+                                . '-' .
+                                Carbon\Carbon::createFromFormat('H:i:s', $schedule['finish_at'])->format('H:i')
+                            }}
+                        @endif
                     </td>
                     <td>{{ $schedule['project_name'] }}</td>
                     <td>{{ $schedule['approval'] == 1 ? '済' : '未' }}</td>
