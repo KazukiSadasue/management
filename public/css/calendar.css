@@ -39,3 +39,9 @@ table td{
 .name {
     font-size: 30px;
 }
+
+.pagination li {
+    list-style: none;
+    display: inline-block;
+    margin-left: 10px;
+}

@@ -167,7 +167,7 @@ class WorkScheduleRepository implements WorkScheduleRepositoryInterface
         
         $work_schedules = $this->searchCondition($condition, $work_schedules);
 
-        $data['work_schedules'] = $work_schedules->groupBy('users.id')->get();
+        $data['work_schedules'] = $work_schedules->groupBy('users.id')->paginate(20);
 
         return $data;
     }

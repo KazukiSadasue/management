@@ -18,6 +18,12 @@
             .top-text {
                 width:50px;
             }
+
+            .pagination li {
+                list-style: none;
+                display: inline-block;
+                margin-left: 10px;
+            }
         </style>
         <script type="text/javascript">
             function detail(user_id) {
@@ -116,6 +122,7 @@
             </tr>
             @endforeach
         </table>
+        {{ $data['work_schedules']->links() }}
         <a href="/admin/calendar">戻る</a> 
     </body>
 </html>
